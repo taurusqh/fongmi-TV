@@ -44,11 +44,9 @@ import java.util.stream.Collectors;
 public class ExoUtil {
 
     public static void setPlayerView(PlayerView view) {
-        view.setRender(Setting.getRender());
         view.getSubtitleView().setStyle(getCaptionStyle());
         view.getSubtitleView().setApplyEmbeddedStyles(true);
         view.getSubtitleView().setApplyEmbeddedFontSizes(false);
-        if (Setting.getSubtitlePosition() != 0) view.getSubtitleView().setBottomPosition(Setting.getSubtitlePosition());
         if (Setting.getSubtitleTextSize() != 0) view.getSubtitleView().setFractionalTextSize(Setting.getSubtitleTextSize());
     }
 
@@ -76,7 +74,6 @@ public class ExoUtil {
 
     public static String getMimeType(int errorCode) {
         if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED || errorCode == PlaybackException.ERROR_CODE_IO_UNSPECIFIED) return MimeTypes.APPLICATION_M3U8;
-        if (errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED) return MimeTypes.APPLICATION_OCTET_STREAM;
         return null;
     }
 

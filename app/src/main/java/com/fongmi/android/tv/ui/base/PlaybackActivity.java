@@ -208,7 +208,6 @@ public abstract class PlaybackActivity extends BaseActivity implements MediaCont
     }
 
     private void setRender() {
-        getExoView().setRender(Setting.getRender());
         detachSurface();
         attachSurface();
     }
