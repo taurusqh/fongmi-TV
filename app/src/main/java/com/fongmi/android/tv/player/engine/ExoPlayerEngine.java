@@ -1,5 +1,8 @@
 package com.fongmi.android.tv.player.engine;
 
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.MediaTitle;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.common.Tracks;
@@ -38,7 +41,6 @@ public class ExoPlayerEngine implements PlayerEngine {
 
     @Override
     public Player rebuild(Player.Listener listener) {
-        player.clearVideoSurface();
         player.release();
         return player = ExoUtil.buildPlayer(decode, listener);
     }
@@ -70,6 +72,22 @@ public class ExoPlayerEngine implements PlayerEngine {
     }
 
     @Override
+    public void setMetadata(MediaMetadata data) {
+        MediaItem current = player.getCurrentMediaItem();
+        if (current != null) player.replaceMediaItem(player.getCurrentMediaItemIndex(), current.buildUpon().setMediaMetadata(data).build());
+    }
+
+    @Override
+    public boolean isLive() {
+        return player.isCurrentMediaItemLive();
+    }
+
+    @Override
+    public boolean isVod() {
+        return !player.isCurrentMediaItemLive();
+    }
+
+    @Override
     public void setTrack(List<Track> tracks) {
         TrackUtil.setTrackSelection(player, tracks);
     }
@@ -87,6 +105,16 @@ public class ExoPlayerEngine implements PlayerEngine {
     @Override
     public Tracks getCurrentTracks() {
         return player.getCurrentTracks();
+    }
+
+    @Override
+    public boolean haveTitle() {
+        return !player.getCurrentMediaTitles().isEmpty();
+    }
+
+    @Override
+    public List<MediaTitle> getCurrentMediaTitles() {
+        return player.getCurrentMediaTitles();
     }
 
     @Override

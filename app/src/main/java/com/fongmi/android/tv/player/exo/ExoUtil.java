@@ -1,7 +1,10 @@
 package com.fongmi.android.tv.player.exo;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.accessibility.CaptioningManager;
 
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
@@ -18,6 +21,8 @@ import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import androidx.media3.exoplayer.trackselection.TrackSelector;
 import androidx.media3.exoplayer.util.EventLogger;
+import androidx.media3.ui.CaptionStyleCompat;
+import androidx.media3.ui.PlayerView;
 
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.BuildConfig;
@@ -38,8 +43,17 @@ import java.util.stream.Collectors;
 
 public class ExoUtil {
 
+    public static void setPlayerView(PlayerView view) {
+        view.setRender(Setting.getRender());
+        view.getSubtitleView().setStyle(getCaptionStyle());
+        view.getSubtitleView().setApplyEmbeddedStyles(true);
+        view.getSubtitleView().setApplyEmbeddedFontSizes(false);
+        if (Setting.getSubtitlePosition() != 0) view.getSubtitleView().setBottomPosition(Setting.getSubtitlePosition());
+        if (Setting.getSubtitleTextSize() != 0) view.getSubtitleView().setFractionalTextSize(Setting.getSubtitleTextSize());
+    }
+
     public static ExoPlayer buildPlayer(int decode, Player.Listener listener) {
-        ExoPlayer player = new ExoPlayer.Builder(App.get()).setLoadControl(buildLoadControl()).setTrackSelector(buildTrackSelector()).setRenderersFactory(buildRenderersFactory(decode == PlayerEngine.HARD ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)).setMediaSourceFactory(buildMediaSourceFactory()).build();
+        ExoPlayer player = new ExoPlayer.Builder(App.get()).setLoadControl(buildLoadControl()).setTrackSelector(buildTrackSelector()).setRenderersFactory(buildRenderersFactory(getRenderMode(decode))).setMediaSourceFactory(buildMediaSourceFactory()).build();
         if (BuildConfig.DEBUG) player.addAnalyticsListener(new EventLogger());
         player.setAudioAttributes(AudioAttributes.DEFAULT, true);
         player.setHandleAudioBecomingNoisy(true);
@@ -62,6 +76,7 @@ public class ExoUtil {
 
     public static String getMimeType(int errorCode) {
         if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED || errorCode == PlaybackException.ERROR_CODE_IO_UNSPECIFIED) return MimeTypes.APPLICATION_M3U8;
+        if (errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED || errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED) return MimeTypes.APPLICATION_OCTET_STREAM;
         return null;
     }
 
@@ -69,6 +84,14 @@ public class ExoUtil {
         Bundle extras = item.requestMetadata.extras;
         if (extras == null) return new HashMap<>();
         return extras.keySet().stream().filter(key -> extras.getString(key) != null).collect(Collectors.toMap(key -> key, extras::getString));
+    }
+
+    private static int getRenderMode(int decode) {
+        return decode == PlayerEngine.HARD ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER;
+    }
+
+    private static CaptionStyleCompat getCaptionStyle() {
+        return Setting.isCaption() ? CaptionStyleCompat.createFromCaptionStyle(((CaptioningManager) App.get().getSystemService(Context.CAPTIONING_SERVICE)).getUserStyle()) : new CaptionStyleCompat(Color.WHITE, Color.TRANSPARENT, Color.TRANSPARENT, CaptionStyleCompat.EDGE_TYPE_OUTLINE, Color.BLACK, null);
     }
 
     private static LoadControl buildLoadControl() {
