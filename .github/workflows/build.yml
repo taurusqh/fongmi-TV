@@ -1,10 +1,7 @@
-name: Build FongMi TV
+name: Build FongMi TV Fixed
 
 on:
-  push:
-    branches: [ release, main ]
-  pull_request:
-    branches: [ release, main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -12,29 +9,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 修复 1：创建缺失的 local.properties 文件
+      - name: Create local.properties
+        run: |
+          echo "sdk.dir=/usr/local/lib/android/sdk" > local.properties
+
+      # 修复 2：强制写入 compileSdk 解决配置错误
+      - name: Fix compileSdk
+        run: |
+          echo "android.compileSdk = 34" >> app/build.gradle
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'corretto'
+          distribution: 'temurin'
 
-      - name: Decode keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > my-release-key.jks
-
-      - name: Grant execute permission for gradlew
+      - name: Grant execute permission
         run: chmod +x gradlew
 
-      - name: Build with Gradle
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: |
-          ./gradlew clean assembleRelease
+      # 编译 Debug 版（不需要签名）
+      - name: Build debug
+        run: ./gradlew assembleDebug
 
-      - name: Upload APKs
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: fongmi-apks
-          path: app/build/outputs/apk/release/*.apk
+          path: app/build/outputs/apk/debug/*.apk
