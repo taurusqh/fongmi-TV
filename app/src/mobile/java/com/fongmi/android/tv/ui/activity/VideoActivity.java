@@ -579,7 +579,8 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
 
     @Override
     public void onItemLongClick(Episode item) {
-        String url = item.getUrl();
+        String url = player().getUrl();
+        if (TextUtils.isEmpty(url)) url = item.getUrl();
         if (TextUtils.isEmpty(url)) return;
         try {
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -989,11 +990,13 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mBinding.control.back.setVisibility(isLock() ? View.GONE : View.VISIBLE);
         mBinding.control.top.setVisibility(isLock() ? View.GONE : View.VISIBLE);
         mBinding.control.getRoot().setVisibility(View.VISIBLE);
+        mBinding.widget.info.setVisibility(View.VISIBLE);
         setR1Callback();
     }
 
     private void hideControl() {
         mBinding.control.getRoot().setVisibility(View.GONE);
+        mBinding.widget.info.setVisibility(View.GONE);
         App.removeCallbacks(mR1);
     }
 
@@ -1540,7 +1543,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         if (!player().isPlaying()) return "";
         float speed = player().getSpeed();
         mBinding.widget.speed.setVisibility(View.VISIBLE);
-        mBinding.widget.speed.setImageResource(R.drawable.ic_widget_forward);
+        mBinding.widget.speed.setText(String.format(Locale.getDefault(), "%.2fx", speed));
         mBinding.widget.speed.startAnimation(ResUtil.getAnim(R.anim.forward));
         return String.format(Locale.getDefault(), "%.2fx", speed);
     }

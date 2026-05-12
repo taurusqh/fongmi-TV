@@ -49,14 +49,23 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|center"
         android:layout_marginTop="24dp"
-        android:src="@drawable/ic_widget_forward"
-        android:visibility="gone" />
+        android:background="@drawable/shape_widget"
+        android:fontFeatureSettings="tnum"
+        android:gravity="center"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="gone"
+        tools:text="3.00x" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/bright"
@@ -118,8 +127,9 @@
         android:id="@+id/info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="16dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/shape_widget"
         android:fontFeatureSettings="tnum"
         android:gravity="center"
