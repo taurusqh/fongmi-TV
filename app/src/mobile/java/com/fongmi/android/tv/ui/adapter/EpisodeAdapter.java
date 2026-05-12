@@ -36,6 +36,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<BaseEpisodeHolder> {
     public interface OnClickListener {
 
         void onItemClick(Episode item);
+
+        void onItemLongClick(Episode item);
     }
 
     public void addAll(List<Episode> items) {
@@ -91,6 +93,10 @@ public class EpisodeAdapter extends RecyclerView.Adapter<BaseEpisodeHolder> {
     @Override
     public void onBindViewHolder(@NonNull BaseEpisodeHolder holder, int position) {
         holder.initView(mItems.get(position));
+        holder.itemView.setOnLongClickListener(v -> {
+            listener.onItemLongClick(mItems.get(position));
+            return true;
+        });
     }
 
     @NonNull

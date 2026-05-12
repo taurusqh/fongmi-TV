@@ -264,6 +264,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     @Override
     protected void onServiceConnected() {
         player().setDanmakuView(mBinding.danmaku);
+        mKeyDown.setPlayer(player());
         checkLand();
         checkId();
     }
@@ -573,6 +574,15 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         scrollToPosition(mBinding.episode, mEpisodeAdapter.getPosition());
         if (isFullscreen()) Notify.show(getString(R.string.play_ready, item.getName()));
         onRefresh();
+    }
+
+    @Override
+    public void onItemLongClick(Episode item) {
+        if (TextUtils.isEmpty(item.getUrl())) return;
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(item.getUrl()), "video/*");
+        intent.putExtra("download", true);
+        startActivity(Intent.createChooser(intent, getString(R.string.app_download)));
     }
 
     @Override

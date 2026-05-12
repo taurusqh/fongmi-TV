@@ -223,12 +223,12 @@ public class PlayerManager implements ParseCallback {
     public String addSpeed() {
         float speed = getSpeed();
         float addon = speed >= 2 ? 1f : 0.25f;
-        speed = speed >= 5 ? 0.25f : Math.min(speed + addon, 5.0f);
+        speed = speed >= 6 ? 0.25f : Math.min(speed + addon, 6.0f);
         return setSpeed(speed);
     }
 
     public String addSpeed(float value) {
-        return setSpeed(Math.min(getSpeed() + value, 5));
+        return setSpeed(Math.min(getSpeed() + value, 6));
     }
 
     public String subSpeed(float value) {

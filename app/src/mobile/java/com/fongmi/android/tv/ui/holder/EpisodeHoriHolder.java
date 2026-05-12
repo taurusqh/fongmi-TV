@@ -28,5 +28,9 @@ public class EpisodeHoriHolder extends BaseEpisodeHolder {
         binding.text.setActivated(item.isActivated());
         binding.text.setText(item.getDesc().concat(item.getName()));
         binding.text.setOnClickListener(v -> listener.onItemClick(item));
+        binding.text.setOnLongClickListener(v -> {
+            listener.onItemLongClick(item);
+            return true;
+        });
     }
 }

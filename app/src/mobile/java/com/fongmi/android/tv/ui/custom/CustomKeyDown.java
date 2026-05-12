@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.Setting;
+import com.fongmi.android.tv.player.PlayerManager;
 import com.fongmi.android.tv.utils.ResUtil;
 import com.fongmi.android.tv.utils.Util;
 
@@ -26,6 +27,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     private final Listener listener;
     private final Activity activity;
     private final View videoView;
+    private PlayerManager player;
     private boolean changeBright;
     private boolean changeVolume;
     private boolean changeSpeed;
@@ -42,6 +44,10 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
 
     public static CustomKeyDown create(Activity activity, View videoView) {
         return new CustomKeyDown(activity, videoView);
+    }
+
+    public void setPlayer(PlayerManager player) {
+        this.player = player;
     }
 
     private CustomKeyDown(Activity activity, View videoView) {
@@ -115,15 +121,27 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     @Override
     public void onLongPress(@NonNull MotionEvent e) {
         if (multiTouch || isEdge(e) || changeScale || lock) return;
+        if (player != null) player.setSpeed(3.0f);
         listener.onSpeedUp();
         changeSpeed = true;
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
-        if (isMultiple(e1) || isEdge(e1) || changeScale || lock || changeSpeed) return true;
+        if (isMultiple(e1) || isEdge(e1) || changeScale || lock) return true;
         float deltaX = e2.getX() - e1.getX();
         float deltaY = e1.getY() - e2.getY();
+        if (changeSpeed) {
+            float speed = player != null ? player.getSpeed() : 1.0f;
+            if (deltaY > 10) {
+                player.subSpeed(0.25f);
+                listener.onSpeedUp();
+            } else if (deltaY < -10) {
+                player.addSpeed(0.25f);
+                listener.onSpeedUp();
+            }
+            return true;
+        }
         if (touch) checkFunc(Math.abs(deltaX), Math.abs(deltaY), e2);
         if (changeTime) listener.onSeeking(time = (long) (deltaX * 50));
         if (changeBright) setBright(deltaY);
