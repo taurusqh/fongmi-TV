@@ -24,10 +24,10 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Chaquopy dependencies
+      - name: Install system libraries
         run: |
-          pip install --upgrade pip
-          pip install chaquopy
+          sudo apt-get update
+          sudo apt-get install -y python3.10 python3.10-venv python3.10-dev
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
