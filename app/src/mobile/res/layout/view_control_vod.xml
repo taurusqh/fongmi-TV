@@ -57,6 +57,26 @@
                 android:scaleType="center"
                 android:src="@drawable/ic_control_cast" />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/infoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/shape_widget"
+                android:fontFeatureSettings="tnum"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="1920x1080 | 8 Mbps | 14:32"
+                tools:visibility="visible" />
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/info"
                 android:layout_width="48dp"

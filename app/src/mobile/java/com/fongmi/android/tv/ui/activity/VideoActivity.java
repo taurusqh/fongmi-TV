@@ -990,13 +990,13 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mBinding.control.back.setVisibility(isLock() ? View.GONE : View.VISIBLE);
         mBinding.control.top.setVisibility(isLock() ? View.GONE : View.VISIBLE);
         mBinding.control.getRoot().setVisibility(View.VISIBLE);
-        mBinding.widget.info.setVisibility(View.VISIBLE);
+        mBinding.control.infoText.setVisibility(View.VISIBLE);
         setR1Callback();
     }
 
     private void hideControl() {
         mBinding.control.getRoot().setVisibility(View.GONE);
-        mBinding.widget.info.setVisibility(View.GONE);
+        mBinding.control.infoText.setVisibility(View.GONE);
         App.removeCallbacks(mR1);
     }
 
@@ -1018,10 +1018,10 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
             String bitrateStr = bitrate > 0 ? (bitrate / 1000000) + " Mbps" : "--";
             String time = Clock.getTime();
             String info = resolution + " | " + bitrateStr + " | " + time;
-            mBinding.widget.info.setText(info);
-            mBinding.widget.info.setVisibility(View.VISIBLE);
+            mBinding.control.infoText.setText(info);
+            mBinding.control.infoText.setVisibility(View.VISIBLE);
         } catch (Exception e) {
-            mBinding.widget.info.setVisibility(View.GONE);
+            mBinding.control.infoText.setVisibility(View.GONE);
         }
     }
 

@@ -137,11 +137,11 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         if (changeSpeed) {
             speedAccumY += deltaY;
             if (speedAccumY > 20) {
-                if (player != null) player.addSpeed(0.25f);
+                if (player != null) player.subSpeed(0.25f);
                 listener.onSpeedUp();
                 speedAccumY = 0;
             } else if (speedAccumY < -20) {
-                if (player != null) player.subSpeed(0.25f);
+                if (player != null) player.addSpeed(0.25f);
                 listener.onSpeedUp();
                 speedAccumY = 0;
             }
