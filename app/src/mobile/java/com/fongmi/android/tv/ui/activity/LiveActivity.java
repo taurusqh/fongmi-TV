@@ -77,6 +77,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 public class LiveActivity extends PlaybackActivity implements CustomKeyDown.Listener, TrackDialog.Listener, Biometric.Callback, PassCallback, ConfigCallback, LiveCallback, GroupAdapter.OnClickListener, ChannelAdapter.OnClickListener, EpgDataAdapter.OnClickListener, CastDialog.Listener, InfoDialog.Listener {
 
@@ -987,12 +988,14 @@ public class LiveActivity extends PlaybackActivity implements CustomKeyDown.List
     }
 
     @Override
-    public void onSpeedUp() {
-        if (player().isLive()) return;
-        if (!player().isPlaying()) return;
+    public String onSpeedUp() {
+        if (player().isLive()) return "";
+        if (!player().isPlaying()) return "";
+        float speed = player().getSpeed();
         mBinding.widget.speed.setVisibility(View.VISIBLE);
+        mBinding.widget.speed.setImageResource(R.drawable.ic_widget_forward);
         mBinding.widget.speed.startAnimation(ResUtil.getAnim(R.anim.forward));
-        mBinding.control.action.speed.setText(player().setSpeed(Setting.getSpeed()));
+        return String.format(Locale.getDefault(), "%.2fx", speed);
     }
 
     @Override
