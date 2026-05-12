@@ -40,6 +40,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     private float bright;
     private float volume;
     private float scale;
+    private float speedAccumY;
     private long time;
 
     public static CustomKeyDown create(Activity activity, View videoView) {
@@ -107,6 +108,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         changeSpeed = false;
         changeBright = false;
         changeVolume = false;
+        speedAccumY = 0;
         bright = Util.getBrightness(activity);
         volume = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
     }
@@ -122,6 +124,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     public void onLongPress(@NonNull MotionEvent e) {
         if (multiTouch || isEdge(e) || changeScale || lock) return;
         if (player != null) player.setSpeed(3.0f);
+        speedAccumY = 0;
         listener.onSpeedUp();
         changeSpeed = true;
     }
@@ -132,10 +135,15 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         float deltaX = e2.getX() - e1.getX();
         float deltaY = e1.getY() - e2.getY();
         if (changeSpeed) {
-            if (deltaY > 10) {
-                if (player != null) player.subSpeed(0.25f);
-            } else if (deltaY < -10) {
+            speedAccumY += deltaY;
+            if (speedAccumY > 20) {
                 if (player != null) player.addSpeed(0.25f);
+                listener.onSpeedUp();
+                speedAccumY = 0;
+            } else if (speedAccumY < -20) {
+                if (player != null) player.subSpeed(0.25f);
+                listener.onSpeedUp();
+                speedAccumY = 0;
             }
             return true;
         }
