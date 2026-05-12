@@ -65,7 +65,7 @@ jobs:
 
       - name: Build debug APKs
         run: |
-          ./gradlew assembleLeanbackArm64_v8aDebug assembleMobileArm64_v8aDebug --no-daemon --stacktrace 2>&1 | tail -300
+          ./gradlew assembleMobileArm64_v8aDebug --no-daemon --stacktrace 2>&1 | tail -300
 
       - name: Show APK files
         run: find app/build -name "*.apk" -type f
