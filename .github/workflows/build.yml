@@ -72,4 +72,4 @@ jobs:
         if: success()
         with:
           name: mobile-arm64-v8a
-          path: app/build/outputs/apk/mobile/arm64_v8a/debug/*.apk
+          path: app/build/outputs/apk/mobileArm64_v8a/debug/*.apk
