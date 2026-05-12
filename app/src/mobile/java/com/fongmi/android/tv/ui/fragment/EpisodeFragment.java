@@ -64,4 +64,8 @@ public class EpisodeFragment extends BaseFragment implements EpisodeAdapter.OnCl
         result.putParcelable("episode", item);
         getParentFragmentManager().setFragmentResult("result", result);
     }
+
+    @Override
+    public void onItemLongClick(Episode item) {
+    }
 }

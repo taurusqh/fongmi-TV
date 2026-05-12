@@ -86,4 +86,9 @@ public class EpisodeListDialog implements EpisodeAdapter.OnClickListener {
         listener.onItemClick(item);
         dialog.dismiss();
     }
+
+    @Override
+    public void onItemLongClick(Episode item) {
+        listener.onItemLongClick(item);
+    }
 }
