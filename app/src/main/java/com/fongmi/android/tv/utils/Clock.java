@@ -25,6 +25,10 @@ public class Clock {
         return new Clock().view(view).format("HH:mm:ss");
     }
 
+    public static String getTime() {
+        return DateTimeFormatter.ofPattern("HH:mm:ss", Locale.getDefault()).format(LocalDateTime.now());
+    }
+
     public Clock() {
     }
 

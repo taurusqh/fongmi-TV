@@ -132,13 +132,10 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         float deltaX = e2.getX() - e1.getX();
         float deltaY = e1.getY() - e2.getY();
         if (changeSpeed) {
-            float speed = player != null ? player.getSpeed() : 1.0f;
             if (deltaY > 10) {
-                player.subSpeed(0.25f);
-                listener.onSpeedUp();
+                if (player != null) player.subSpeed(0.25f);
             } else if (deltaY < -10) {
-                player.addSpeed(0.25f);
-                listener.onSpeedUp();
+                if (player != null) player.addSpeed(0.25f);
             }
             return true;
         }
@@ -244,7 +241,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
 
         void onSeekEnd(long time);
 
-        void onSpeedUp();
+        String onSpeedUp();
 
         void onSpeedEnd();
 

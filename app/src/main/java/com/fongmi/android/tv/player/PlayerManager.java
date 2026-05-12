@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.PlaybackException;
@@ -78,6 +79,22 @@ public class PlayerManager implements ParseCallback {
 
     public Tracks getCurrentTracks() {
         return engine.getCurrentTracks();
+    }
+
+    public int getBitrate() {
+        try {
+            Tracks tracks = getCurrentTracks();
+            for (Tracks.Group group : tracks.getGroups()) {
+                for (int i = 0; i < group.length; i++) {
+                    if (group.isTrackSelected(i) && group.getType() == C.TRACK_TYPE_VIDEO) {
+                        return group.getTrackFormat(i).bitrate;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        return 0;
     }
 
     public MediaItem getCurrentMediaItem() {

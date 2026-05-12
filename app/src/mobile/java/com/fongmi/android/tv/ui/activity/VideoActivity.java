@@ -578,11 +578,16 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
 
     @Override
     public void onItemLongClick(Episode item) {
-        if (TextUtils.isEmpty(item.getUrl())) return;
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(item.getUrl()), "video/*");
-        intent.putExtra("download", true);
-        startActivity(Intent.createChooser(intent, getString(R.string.app_download)));
+        String url = item.getUrl();
+        if (TextUtils.isEmpty(url)) return;
+        try {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, url);
+            intent.setType("text/plain");
+            startActivity(Intent.createChooser(intent, getString(R.string.app_download)));
+        } catch (Exception e) {
+            Notify.show(R.string.error_play_url);
+        }
     }
 
     @Override
@@ -1000,6 +1005,22 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         App.post(mR2, 1000);
     }
 
+    private void updateVideoInfo() {
+        try {
+            int width = player().getVideoWidth();
+            int height = player().getVideoHeight();
+            String resolution = width > 0 && height > 0 ? width + "x" + height : "--";
+            int bitrate = player().getBitrate();
+            String bitrateStr = bitrate > 0 ? (bitrate / 1000000) + " Mbps" : "--";
+            String time = Clock.getTime();
+            String info = resolution + " | " + bitrateStr + " | " + time;
+            mBinding.widget.info.setText(info);
+            mBinding.widget.info.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            mBinding.widget.info.setVisibility(View.GONE);
+        }
+    }
+
     private void setOrient() {
         if (isPort() && isAutoRotate()) setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
         if (isLand() && isAutoRotate()) setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
@@ -1227,6 +1248,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
                 hideProgress();
                 checkControl();
                 player().reset();
+                updateVideoInfo();
                 break;
             case Player.STATE_ENDED:
                 checkEnded(true);
@@ -1513,11 +1535,13 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     }
 
     @Override
-    public void onSpeedUp() {
-        if (!player().isPlaying()) return;
+    public String onSpeedUp() {
+        if (!player().isPlaying()) return "";
+        float speed = player().getSpeed();
         mBinding.widget.speed.setVisibility(View.VISIBLE);
+        mBinding.widget.speed.setImageResource(R.drawable.ic_widget_forward);
         mBinding.widget.speed.startAnimation(ResUtil.getAnim(R.anim.forward));
-        mBinding.control.action.speed.setText(player().setSpeed(Setting.getSpeed()));
+        return String.format(Locale.getDefault(), "%.2fx", speed);
     }
 
     @Override
