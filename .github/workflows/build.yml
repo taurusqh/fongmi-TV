@@ -73,11 +73,11 @@ jobs:
 
       - name: Build debug APKs
         run: |
-          ./gradlew assembleMobileArm64_v8aDebug --no-daemon --stacktrace 2>&1 | tail -300
+          ./gradlew assembleMobileArm64_v8aRelease --no-daemon --stacktrace 2>&1 | tail -300
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         if: success()
         with:
           name: mobile-arm64-v8a
-          path: app/build/outputs/apk/mobileArm64_v8a/debug/*.apk
+          path: app/build/outputs/apk/mobileArm64_v8a/release/*.apk
