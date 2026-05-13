@@ -133,6 +133,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     private Runnable mR2;
     private Runnable mR3;
     private Runnable mR4;
+    private Runnable mR5;
     private Clock mClock;
     private PiP mPiP;
 
@@ -301,6 +302,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mR2 = this::setTraffic;
         mR3 = this::setOrient;
         mR4 = this::showEmpty;
+        mR5 = this::updateTime;
         mPiP = new PiP();
         checkDanmakuImg();
         setRecyclerView();
@@ -977,9 +979,9 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     private void showControl() {
         if (service() == null || isInPictureInPictureMode()) return;
         mBinding.control.danmaku.setVisibility(isLock() || !player().haveDanmaku() ? View.GONE : View.VISIBLE);
-        mBinding.control.setting.setVisibility(mHistory == null || isFullscreen() ? View.GONE : View.VISIBLE);
+        mBinding.control.setting.setVisibility(mHistory == null ? View.GONE : View.VISIBLE);
         mBinding.control.right.rotate.setVisibility(isFullscreen() && !isLock() ? View.VISIBLE : View.GONE);
-        mBinding.control.keep.setVisibility(mHistory == null || isFullscreen() ? View.GONE : View.VISIBLE);
+        mBinding.control.keep.setVisibility(mHistory == null ? View.GONE : View.VISIBLE);
         mBinding.control.parse.setVisibility(isFullscreen() && isUseParse() ? View.VISIBLE : View.GONE);
         mBinding.control.action.getRoot().setVisibility(isFullscreen() ? View.VISIBLE : View.GONE);
         mBinding.control.right.lock.setVisibility(isFullscreen() ? View.VISIBLE : View.GONE);
@@ -992,6 +994,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mBinding.control.getRoot().setVisibility(View.VISIBLE);
         mBinding.control.resolution.setVisibility(View.VISIBLE);
         mBinding.control.time.setVisibility(View.VISIBLE);
+        updateTime();
         setR1Callback();
     }
 
@@ -999,7 +1002,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mBinding.control.getRoot().setVisibility(View.GONE);
         mBinding.control.resolution.setVisibility(View.GONE);
         mBinding.control.time.setVisibility(View.GONE);
-        App.removeCallbacks(mR1);
+        App.removeCallbacks(mR1, mR5);
     }
 
     private void hideSheet() {
@@ -1024,6 +1027,12 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
             mBinding.control.resolution.setVisibility(View.GONE);
             mBinding.control.time.setVisibility(View.GONE);
         }
+    }
+
+    private void updateTime() {
+        if (!isVisible(mBinding.control.getRoot())) return;
+        mBinding.control.time.setText(Clock.getTime());
+        App.post(mR5, 1000);
     }
 
     private void setOrient() {
@@ -1713,7 +1722,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         saveHistory(true);
         Timer.get().reset();
         RefreshEvent.keep();
-        App.removeCallbacks(mR1, mR2, mR3, mR4);
+        App.removeCallbacks(mR1, mR2, mR3, mR4, mR5);
         mViewModel.getResult().removeObserver(mObserveDetail);
         mViewModel.getPlayer().removeObserver(mObservePlayer);
         mViewModel.getSearch().removeObserver(mObserveSearch);
