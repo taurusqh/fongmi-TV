@@ -20,7 +20,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 28
         versionCode 541
-        versionName "5.4.194"
+        versionName "5.4.195"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString(), "eventBusIndex": "com.fongmi.android.tv.event.EventIndex"]
@@ -57,8 +57,8 @@ android {
             if (localProps['storeFile'] != null) {
                 storeFile file(localProps['storeFile'])
                 keyAlias localProps['keyAlias']
-                keyPassword localProps['storePassword']
-                storePassword localProps['storePassword']
+                keyPassword localProps['keystorePassword']
+                storePassword localProps['keystorePassword']
             }
         }
     }
