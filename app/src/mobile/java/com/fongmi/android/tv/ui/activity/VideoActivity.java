@@ -1542,15 +1542,19 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     public String onSpeedUp() {
         if (!player().isPlaying()) return "";
         float speed = player().getSpeed();
+        long position = player().getPosition();
+        long duration = player().getDuration();
+        String posTime = Util.timeMs(position);
+        String durTime = duration > 0 ? Util.timeMs(duration) : "--:--";
+        String text = String.format(Locale.getDefault(), "%.2fx %s/%s", speed, posTime, durTime);
         mBinding.widget.speed.setVisibility(View.VISIBLE);
-        mBinding.widget.speed.setText(String.format(Locale.getDefault(), "%.2fx", speed));
-        mBinding.widget.speed.startAnimation(ResUtil.getAnim(R.anim.forward));
-        return String.format(Locale.getDefault(), "%.2fx", speed);
+        mBinding.widget.speed.setText(text);
+        return text;
     }
 
     @Override
     public void onSpeedEnd() {
-        mBinding.widget.speed.clearAnimation();
+        mBinding.widget.speed.setVisibility(View.GONE);
         mBinding.control.action.speed.setText(player().setSpeed(mHistory.getSpeed()));
     }
 
