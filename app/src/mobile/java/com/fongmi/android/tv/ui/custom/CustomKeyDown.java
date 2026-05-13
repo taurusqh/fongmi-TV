@@ -42,6 +42,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     private float scale;
     private float speedAccumY;
     private long time;
+    private Runnable speedUpdater;
 
     public static CustomKeyDown create(Activity activity, View videoView) {
         return new CustomKeyDown(activity, videoView);
@@ -109,6 +110,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         changeBright = false;
         changeVolume = false;
         speedAccumY = 0;
+        if (speedUpdater != null) App.removeCallbacks(speedUpdater);
         bright = Util.getBrightness(activity);
         volume = manager.getStreamVolume(AudioManager.STREAM_MUSIC);
     }
@@ -125,16 +127,15 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         if (multiTouch || isEdge(e) || changeScale || lock) return;
         if (player != null) player.setSpeed(3.0f);
         speedAccumY = 0;
-        listener.onSpeedUp();
         changeSpeed = true;
+        listener.onSpeedUp();
+        App.post(speedUpdater = () -> listener.onSpeedUp(), 500);
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
-        if (isMultiple(e1) || isEdge(e1) || changeScale || lock) return true;
-        float deltaX = e2.getX() - e1.getX();
-        float deltaY = e1.getY() - e2.getY();
         if (changeSpeed) {
+            float deltaY = e1.getY() - e2.getY();
             speedAccumY += deltaY;
             if (speedAccumY > 20) {
                 if (player != null) player.subSpeed(0.25f);
@@ -147,6 +148,8 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
             }
             return true;
         }
+        if (isMultiple(e1) || isEdge(e1) || changeScale || lock) return true;
+        float deltaX = e2.getX() - e1.getX();
         if (touch) checkFunc(Math.abs(deltaX), Math.abs(deltaY), e2);
         if (changeTime) listener.onSeeking(time = (long) (deltaX * 50));
         if (changeBright) setBright(deltaY);
