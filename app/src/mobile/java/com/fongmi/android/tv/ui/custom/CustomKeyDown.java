@@ -118,7 +118,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     @Override
     public boolean onDown(@NonNull MotionEvent e) {
         if (isMultiple(e) || isEdge(e) || changeScale || lock) return true;
-        reset();
+        if (!changeSpeed) reset();
         return true;
     }
 
@@ -137,11 +137,11 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         float deltaY = e1.getY() - e2.getY();
         if (changeSpeed) {
             speedAccumY += deltaY;
-            if (speedAccumY < -20) {
+            if (speedAccumY > 20) {
                 if (player != null) player.addSpeed(0.25f);
                 listener.onSpeedUp();
                 speedAccumY = 0;
-            } else if (speedAccumY > 20) {
+            } else if (speedAccumY < -20) {
                 if (player != null) player.subSpeed(0.25f);
                 listener.onSpeedUp();
                 speedAccumY = 0;
