@@ -990,13 +990,15 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mBinding.control.back.setVisibility(isLock() ? View.GONE : View.VISIBLE);
         mBinding.control.top.setVisibility(isLock() ? View.GONE : View.VISIBLE);
         mBinding.control.getRoot().setVisibility(View.VISIBLE);
-        mBinding.control.infoText.setVisibility(View.VISIBLE);
+        mBinding.control.resolution.setVisibility(View.VISIBLE);
+        mBinding.control.time.setVisibility(View.VISIBLE);
         setR1Callback();
     }
 
     private void hideControl() {
         mBinding.control.getRoot().setVisibility(View.GONE);
-        mBinding.control.infoText.setVisibility(View.GONE);
+        mBinding.control.resolution.setVisibility(View.GONE);
+        mBinding.control.time.setVisibility(View.GONE);
         App.removeCallbacks(mR1);
     }
 
@@ -1014,14 +1016,13 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
             int width = player().getVideoWidth();
             int height = player().getVideoHeight();
             String resolution = width > 0 && height > 0 ? width + "x" + height : "--";
-            int bitrate = player().getBitrate();
-            String bitrateStr = bitrate > 0 ? (bitrate / 1000000) + " Mbps" : "--";
-            String time = Clock.getTime();
-            String info = resolution + " | " + bitrateStr + " | " + time;
-            mBinding.control.infoText.setText(info);
-            mBinding.control.infoText.setVisibility(View.VISIBLE);
+            mBinding.control.resolution.setText(resolution);
+            mBinding.control.resolution.setVisibility(View.VISIBLE);
+            mBinding.control.time.setText(Clock.getTime());
+            mBinding.control.time.setVisibility(View.VISIBLE);
         } catch (Exception e) {
-            mBinding.control.infoText.setVisibility(View.GONE);
+            mBinding.control.resolution.setVisibility(View.GONE);
+            mBinding.control.time.setVisibility(View.GONE);
         }
     }
 

@@ -58,21 +58,39 @@
                 android:src="@drawable/ic_control_cast" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/infoText"
+                android:id="@+id/resolution"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
                 android:minWidth="48dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
                 android:textColor="@color/white"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:visibility="gone"
-                tools:text="1920x1080 | 8 Mbps | 14:32"
+                tools:text="1920x1080"
+                tools:visibility="visible" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:minWidth="48dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:visibility="gone"
+                tools:text="14:32"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView

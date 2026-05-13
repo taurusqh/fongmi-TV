@@ -103,3 +103,19 @@ def ver = project.version
 | variant.versionName 报错 | AGP 9.x 访问方式 | 用 project.version |
 | 签名不匹配 | Debug 构建用自动签名 | 改用 Release 构建 |
 | keystore not found | 路径不在 app 目录 | 解密到 app/release.jks |
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Local markdown issue tracker using `.scratch/` directory. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default triage label vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context repo layout. See `docs/agents/domain.md`.
