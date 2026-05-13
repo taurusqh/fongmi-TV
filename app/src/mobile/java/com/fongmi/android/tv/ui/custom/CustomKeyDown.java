@@ -134,8 +134,8 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
 
     @Override
     public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
+        float deltaY = e1.getY() - e2.getY();
         if (changeSpeed) {
-            float deltaY = e1.getY() - e2.getY();
             speedAccumY += deltaY;
             if (speedAccumY > 20) {
                 if (player != null) player.subSpeed(0.25f);
