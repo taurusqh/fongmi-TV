@@ -122,7 +122,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     @Override
     public boolean onDown(@NonNull MotionEvent e) {
         if (isMultiple(e) || isEdge(e) || changeScale || lock) return true;
-        reset();
+        if (!changeSpeed) reset();
         return true;
     }
 
