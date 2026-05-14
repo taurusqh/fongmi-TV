@@ -105,7 +105,7 @@ androidComponents {
         def mode = flavors['mode'] ?: 'mode'
         def abi = flavors['abi'] ?: 'abi'
         variant.outputs.each { output ->
-            output.outputFileName.set("${mode}-${abi}-${variant.versionName.get()}.apk")
+            output.outputFileName.set("${mode}-${abi}-${project.version}.apk")
         }
     }
 }
