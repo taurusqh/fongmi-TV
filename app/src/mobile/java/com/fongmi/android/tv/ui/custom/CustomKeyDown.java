@@ -31,6 +31,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     private boolean changeBright;
     private boolean changeVolume;
     private boolean changeSpeed;
+    private boolean speedLongPress;
     private boolean changeScale;
     private boolean changeTime;
     private boolean multiTouch;
@@ -66,7 +67,10 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         int action = e.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) multiTouch = false;
         if (action == MotionEvent.ACTION_POINTER_DOWN) multiTouch = true;
-        if (action == MotionEvent.ACTION_UP) listener.onTouchEnd();
+        if (action == MotionEvent.ACTION_UP) {
+            speedLongPress = false;
+            listener.onTouchEnd();
+        }
         if (changeSpeed && action == MotionEvent.ACTION_UP) listener.onSpeedEnd();
         if (changeTime && action == MotionEvent.ACTION_UP) listener.onSeekEnd(time);
         return e.getPointerCount() == 2 ? scaleDetector.onTouchEvent(e) : detector.onTouchEvent(e);
@@ -118,7 +122,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     @Override
     public boolean onDown(@NonNull MotionEvent e) {
         if (isMultiple(e) || isEdge(e) || changeScale || lock) return true;
-        if (!changeSpeed) reset();
+        reset();
         return true;
     }
 
@@ -128,6 +132,8 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         if (player != null) player.setSpeed(3.0f);
         speedAccumY = 0;
         changeSpeed = true;
+        speedLongPress = true;
+        touch = false;
         listener.onSpeedUp();
         App.post(speedUpdater = () -> listener.onSpeedUp(), 500);
     }
@@ -135,14 +141,14 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     @Override
     public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
         float deltaY = e1.getY() - e2.getY();
-        if (changeSpeed) {
+        if (changeSpeed && speedLongPress) {
             speedAccumY += deltaY;
             if (speedAccumY > 20) {
-                if (player != null) player.addSpeed(0.25f);
+                if (player != null) player.subSpeed(0.25f);
                 listener.onSpeedUp();
                 speedAccumY = 0;
             } else if (speedAccumY < -20) {
-                if (player != null) player.subSpeed(0.25f);
+                if (player != null) player.addSpeed(0.25f);
                 listener.onSpeedUp();
                 speedAccumY = 0;
             }
