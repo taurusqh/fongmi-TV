@@ -121,6 +121,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
 
     @Override
     public boolean onDown(@NonNull MotionEvent e) {
+        android.util.Log.d("CustomKeyDown", "onDown called");
         if (isMultiple(e) || isEdge(e) || changeScale || lock) return true;
         if (!changeSpeed) reset();
         return true;
@@ -128,6 +129,7 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
 
     @Override
     public void onLongPress(@NonNull MotionEvent e) {
+        android.util.Log.d("CustomKeyDown", "onLongPress called");
         if (multiTouch || isEdge(e) || changeScale || lock) return;
         if (player != null) player.setSpeed(3.0f);
         speedAccumY = 0;
