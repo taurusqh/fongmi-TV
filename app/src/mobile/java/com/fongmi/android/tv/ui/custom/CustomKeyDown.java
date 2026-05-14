@@ -66,7 +66,10 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     public boolean onTouchEvent(MotionEvent e) {
         int action = e.getActionMasked();
         android.util.Log.d("CustomKeyDown", "onTouchEvent action=" + action + " ptrCount=" + e.getPointerCount());
-        if (action == MotionEvent.ACTION_DOWN) multiTouch = false;
+        if (action == MotionEvent.ACTION_DOWN) {
+            multiTouch = false;
+            lastY = e.getY();
+        }
         if (action == MotionEvent.ACTION_POINTER_DOWN) multiTouch = true;
         if (action == MotionEvent.ACTION_UP) {
             speedLongPress = false;
@@ -74,8 +77,32 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
         }
         if (changeSpeed && action == MotionEvent.ACTION_UP) listener.onSpeedEnd();
         if (changeTime && action == MotionEvent.ACTION_UP) listener.onSeekEnd(time);
+
+        // When in speed change mode, handle scroll directly without GestureDetector
+        if (changeSpeed && speedLongPress && action == MotionEvent.ACTION_MOVE) {
+            float deltaY = e.getY() - lastY;
+            android.util.Log.d("CustomKeyDown", "direct scroll deltaY=" + deltaY);
+            speedAccumY += deltaY;
+            if (speedAccumY > 20) {
+                android.util.Log.d("CustomKeyDown", "ADD SPEED");
+                if (player != null) player.addSpeed(0.25f);
+                listener.onSpeedUp();
+                speedAccumY = 0;
+            } else if (speedAccumY < -20) {
+                android.util.Log.d("CustomKeyDown", "SUB SPEED");
+                if (player != null) player.subSpeed(0.25f);
+                listener.onSpeedUp();
+                speedAccumY = 0;
+            }
+            lastY = e.getY();
+            return true;
+        }
+
+        lastY = e.getY();
         return e.getPointerCount() == 2 ? scaleDetector.onTouchEvent(e) : detector.onTouchEvent(e);
     }
+
+    private float lastY = 0;
 
     public void resetScale() {
         if (scale == 1.0f) return;
