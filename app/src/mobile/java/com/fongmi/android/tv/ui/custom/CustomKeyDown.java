@@ -141,14 +141,18 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
     @Override
     public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
         float deltaY = e1.getY() - e2.getY();
+        android.util.Log.d("CustomKeyDown", "onScroll changeSpeed=" + changeSpeed + " speedLongPress=" + speedLongPress + " deltaY=" + deltaY);
         if (changeSpeed && speedLongPress) {
             speedAccumY += deltaY;
+            android.util.Log.d("CustomKeyDown", "speedAccumY=" + speedAccumY);
             if (speedAccumY > 20) {
-                if (player != null) player.subSpeed(0.25f);
+                android.util.Log.d("CustomKeyDown", "ADD SPEED");
+                if (player != null) player.addSpeed(0.25f);
                 listener.onSpeedUp();
                 speedAccumY = 0;
             } else if (speedAccumY < -20) {
-                if (player != null) player.addSpeed(0.25f);
+                android.util.Log.d("CustomKeyDown", "SUB SPEED");
+                if (player != null) player.subSpeed(0.25f);
                 listener.onSpeedUp();
                 speedAccumY = 0;
             }
