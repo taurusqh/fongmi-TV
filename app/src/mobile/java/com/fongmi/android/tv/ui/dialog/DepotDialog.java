@@ -7,22 +7,33 @@ import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.bean.Depot;
 import com.fongmi.android.tv.databinding.DialogDepotBinding;
 import com.fongmi.android.tv.service.DepotService;
 import com.fongmi.android.tv.ui.adapter.DepotAdapter;
+import com.fongmi.android.tv.ui.custom.CustomRecyclerView;
 import com.fongmi.android.tv.ui.custom.SpaceItemDecoration;
 import com.fongmi.android.tv.utils.Notify;
+import com.fongmi.android.tv.utils.Task;
+import com.github.catvod.net.OkHttp;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-// 多仓管理对话框，显示仓库列表，支持添加、切换和删除
+import java.io.IOException;
+import java.util.List;
+
+import okhttp3.Response;
+
+// 多仓管理对话框，支持添加仓库地址、查看仓库列表、切换配置源
 public class DepotDialog implements DepotAdapter.OnClickListener {
 
     private DialogDepotBinding binding;
     private DepotAdapter adapter;
     private AlertDialog dialog;
+    private AlertDialog subDialog;
     private OnDepotListener listener;
 
     public interface OnDepotListener {
@@ -99,11 +110,70 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
 
     @Override
     public void onItemClick(Depot item) {
-        if (listener != null) {
-            DepotService.get().setDefault(item.getId());
-            listener.onDepotSwitch(item);
+        fetchSubDepots(item);
+    }
+
+    private void fetchSubDepots(Depot depot) {
+        Notify.progress(dialog.getContext());
+        Task.execute(() -> {
+            try {
+                Response res = OkHttp.newCall(depot.getUrl()).execute();
+                if (!res.isSuccessful()) {
+                    App.post(() -> {
+                        Notify.dismiss();
+                        Notify.show("HTTP " + res.code());
+                    });
+                    return;
+                }
+                String body = res.body().string();
+                List<Depot> items = Depot.arrayFrom(body);
+                App.post(() -> {
+                    Notify.dismiss();
+                    if (items.isEmpty()) {
+                        Notify.show(R.string.depot_empty);
+                    } else {
+                        showSubDialog(items);
+                    }
+                });
+            } catch (IOException e) {
+                App.post(() -> {
+                    Notify.dismiss();
+                    Notify.show(e.getMessage());
+                });
+            }
+        });
+    }
+
+    private void showSubDialog(List<Depot> items) {
+        CustomRecyclerView recycler = new CustomRecyclerView(dialog.getContext());
+        recycler.setLayoutManager(new LinearLayoutManager(dialog.getContext()));
+        recycler.addItemDecoration(new SpaceItemDecoration(1, 8));
+        recycler.setPadding(24, 24, 24, 24);
+
+        DepotAdapter subAdapter = new DepotAdapter(new DepotAdapter.OnClickListener() {
+            @Override
+            public void onItemClick(Depot item) {
+                subDialog.dismiss();
+                if (listener != null) {
+                    listener.onDepotSwitch(item);
+                }
+            }
+
+            @Override
+            public void onItemDelete(Depot item) {
+            }
+        });
+        subAdapter.setItems(items);
+        recycler.setAdapter(subAdapter);
+
+        subDialog = new MaterialAlertDialogBuilder(dialog.getContext())
+                .setView(recycler)
+                .create();
+        subDialog.getWindow().setDimAmount(0);
+        subDialog.show();
+        if (subDialog.getWindow() != null) {
+            subDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
-        dialog.dismiss();
     }
 
     @Override
