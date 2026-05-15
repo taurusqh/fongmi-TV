@@ -874,7 +874,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     }
 
     private void playQueue(Queue item) {
-        Site site = VodConfig.getSite(item.getSiteKey());
+        Site site = VodConfig.get().getSite(item.getSiteKey());
         if (site.getKey().isEmpty()) {
             Notify.show("Site not found");
             return;
@@ -892,7 +892,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mHistory.setEpisodeUrl(item.getEpisodeUrl());
         QueueService.get().remove(item.getId());
         Episode episode = Episode.create(item.getEpisodeName(), item.getEpisodeUrl());
-        episode.toggle();
+        episode.setActivated(true);
         Flag flag = Flag.create("");
         flag.getEpisodes().add(episode);
         mFlagAdapter.addAll(List.of(flag));
