@@ -33,6 +33,7 @@ import com.fongmi.android.tv.impl.SiteCallback;
 import com.fongmi.android.tv.ui.activity.HomeActivity;
 import com.fongmi.android.tv.ui.base.BaseFragment;
 import com.fongmi.android.tv.ui.dialog.ConfigDialog;
+import com.fongmi.android.tv.ui.dialog.DepotDialog;
 import com.fongmi.android.tv.ui.dialog.HistoryDialog;
 import com.fongmi.android.tv.ui.dialog.LiveDialog;
 import com.fongmi.android.tv.ui.dialog.RestoreDialog;
@@ -136,6 +137,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         mBinding.wallDefault.setOnClickListener(this::setWallDefault);
         mBinding.wallRefresh.setOnClickListener(this::setWallRefresh);
         mBinding.wallRefresh.setOnLongClickListener(this::onWallHistory);
+        mBinding.depot.setOnClickListener(this::onDepot);
     }
 
     @Override
@@ -218,6 +220,10 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
     private boolean onWallEdit(View view) {
         ConfigDialog.create(this).launcher(launcher).type(type = 2).edit().show();
         return true;
+    }
+
+    private void onDepot(View view) {
+        DepotDialog.create(this).show();
     }
 
     private void onVodHome(View view) {

@@ -1,0 +1,98 @@
+package com.fongmi.android.tv.ui.dialog;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+
+import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.bean.Depot;
+import com.fongmi.android.tv.databinding.DialogDepotBinding;
+import com.fongmi.android.tv.service.DepotService;
+import com.fongmi.android.tv.ui.adapter.DepotAdapter;
+import com.fongmi.android.tv.ui.custom.SpaceItemDecoration;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+public class DepotDialog implements DepotAdapter.OnClickListener {
+
+    private DialogDepotBinding binding;
+    private DepotAdapter adapter;
+    private AlertDialog dialog;
+    private OnDepotListener listener;
+
+    public interface OnDepotListener {
+        void onDepotSwitch(Depot item);
+    }
+
+    public static DepotDialog create(Activity activity) {
+        return new DepotDialog(activity);
+    }
+
+    public static DepotDialog create(Fragment fragment) {
+        return new DepotDialog(fragment);
+    }
+
+    public DepotDialog(Activity activity) {
+        init(activity);
+    }
+
+    public DepotDialog(Fragment fragment) {
+        init(fragment.requireActivity());
+    }
+
+    private void init(Activity activity) {
+        this.binding = DialogDepotBinding.inflate(LayoutInflater.from(activity));
+        this.dialog = new MaterialAlertDialogBuilder(activity).setView(binding.getRoot()).create();
+        this.adapter = new DepotAdapter(this);
+    }
+
+    public DepotDialog setListener(OnDepotListener listener) {
+        this.listener = listener;
+        return this;
+    }
+
+    public void show() {
+        setRecyclerView();
+        setDialog();
+    }
+
+    private void setRecyclerView() {
+        binding.recycler.setAdapter(adapter);
+        binding.recycler.setItemAnimator(null);
+        binding.recycler.setHasFixedSize(true);
+        binding.recycler.addItemDecoration(new SpaceItemDecoration(1, 8));
+        adapter.setItems(DepotService.get().getAll());
+    }
+
+    private void setDialog() {
+        if (adapter.getItemCount() == 0) {
+            // Even if empty, show dialog with message
+        }
+        dialog.getWindow().setDimAmount(0);
+        dialog.show();
+        // Set dialog width
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+    }
+
+    @Override
+    public void onItemClick(Depot item) {
+        if (listener != null) {
+            DepotService.get().setDefault(item.getId());
+            listener.onDepotSwitch(item);
+        }
+        dialog.dismiss();
+    }
+
+    @Override
+    public void onItemDelete(Depot item) {
+        DepotService.get().delete(item.getId());
+        adapter.setItems(DepotService.get().getAll());
+    }
+}

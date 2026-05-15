@@ -56,4 +56,11 @@ public class Migrations {
             database.execSQL("CREATE TABLE Queue (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `siteKey` TEXT, `vodId` TEXT, `vodName` TEXT, `vodPic` TEXT, `episodeUrl` TEXT, `episodeName` TEXT, `createTime` INTEGER NOT NULL)");
         }
     };
+
+    public static final Migration MIGRATION_36_37 = new Migration(36, 37) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE Depot (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `url` TEXT, `name` TEXT, `isDefault` INTEGER NOT NULL, `sort` INTEGER NOT NULL, `createTime` INTEGER NOT NULL, `api` TEXT, `ext` TEXT, `jar` TEXT, `proxy` TEXT)");
+        }
+    };
 }

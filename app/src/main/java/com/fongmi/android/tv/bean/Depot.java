@@ -2,32 +2,177 @@ package com.fongmi.android.tv.bean;
 
 import android.text.TextUtils;
 
-import com.fongmi.android.tv.App;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.reflect.TypeToken;
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-import java.lang.reflect.Type;
+import com.fongmi.android.tv.App;
+import com.fongmi.android.tv.db.AppDatabase;
+import com.fongmi.android.tv.impl.Diffable;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Collections;
 import java.util.List;
 
-public class Depot {
+@Entity
+public class Depot implements Diffable<Depot> {
 
-    @SerializedName("url")
+    @PrimaryKey(autoGenerate = true)
+    private long id;
     private String url;
-    @SerializedName("name")
     private String name;
+    private boolean isDefault;
+    private int sort;
+    private long createTime;
+
+    @SerializedName("api")
+    private String api;
+    @SerializedName("ext")
+    private String ext;
+    @SerializedName("jar")
+    private String jar;
+    @SerializedName("proxy")
+    private String proxy;
+
+    public Depot() {
+        this.createTime = System.currentTimeMillis();
+    }
 
     public static List<Depot> arrayFrom(String str) {
-        Type listType = new TypeToken<List<Depot>>() {}.getType();
-        List<Depot> items = App.gson().fromJson(str, listType);
+        List<Depot> items = App.gson().fromJson(str, new com.google.gson.reflect.TypeToken<List<Depot>>() {}.getType());
         return items == null ? Collections.emptyList() : items;
+    }
+
+    public static List<Depot> getAll() {
+        return AppDatabase.get().getDepotDao().findAll();
+    }
+
+    public static Depot getDefault() {
+        return AppDatabase.get().getDepotDao().getDefault();
+    }
+
+    public static void setDefault(long id) {
+        AppDatabase.get().getDepotDao().clearDefault();
+        AppDatabase.get().getDepotDao().setDefault(id);
+    }
+
+    public static void delete(long id) {
+        AppDatabase.get().getDepotDao().delete(id);
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUrl() {
         return TextUtils.isEmpty(url) ? "" : url;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String getName() {
         return TextUtils.isEmpty(name) ? getUrl() : name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getApi() {
+        return api;
+    }
+
+    public void setApi(String api) {
+        this.api = api;
+    }
+
+    public String getExt() {
+        return ext;
+    }
+
+    public void setExt(String ext) {
+        this.ext = ext;
+    }
+
+    public String getJar() {
+        return jar;
+    }
+
+    public void setJar(String jar) {
+        this.jar = jar;
+    }
+
+    public String getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(String proxy) {
+        this.proxy = proxy;
+    }
+
+    public void save() {
+        AppDatabase.get().getDepotDao().insert(this);
+    }
+
+    public void delete() {
+        AppDatabase.get().getDepotDao().delete(getId());
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Depot it)) return false;
+        return getId() == it.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(getId());
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return App.gson().toJson(this);
+    }
+
+    @Override
+    public boolean isSameItem(Depot other) {
+        return getId() == other.getId();
+    }
+
+    @Override
+    public boolean isSameContent(Depot other) {
+        return getUrl().equals(other.getUrl());
     }
 }
