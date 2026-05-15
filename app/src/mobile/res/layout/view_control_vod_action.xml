@@ -96,5 +96,10 @@
             style="@style/Control"
             android:text="@string/detail_episode" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/queue"
+            style="@style/Control"
+            android:text="@string/queue" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 </HorizontalScrollView>

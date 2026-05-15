@@ -8,3 +8,6 @@
 *.properties
 lib-*.aar
 /Release
+/downloads
+download-*.*
+list-zip.*

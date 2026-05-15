@@ -53,6 +53,7 @@ import com.fongmi.android.tv.bean.Parse;
 import com.fongmi.android.tv.bean.Result;
 import com.fongmi.android.tv.bean.Site;
 import com.fongmi.android.tv.bean.Sub;
+import com.fongmi.android.tv.bean.Queue;
 import com.fongmi.android.tv.bean.Track;
 import com.fongmi.android.tv.bean.Vod;
 import com.fongmi.android.tv.databinding.ActivityVideoBinding;
@@ -64,6 +65,7 @@ import com.fongmi.android.tv.model.SiteViewModel;
 import com.fongmi.android.tv.player.PlayerHelper;
 import com.fongmi.android.tv.player.PlayerManager;
 import com.fongmi.android.tv.service.PlaybackService;
+import com.fongmi.android.tv.service.QueueService;
 import com.fongmi.android.tv.ui.adapter.EpisodeAdapter;
 import com.fongmi.android.tv.ui.adapter.FlagAdapter;
 import com.fongmi.android.tv.ui.adapter.ParseAdapter;
@@ -82,6 +84,7 @@ import com.fongmi.android.tv.ui.dialog.EpisodeGridDialog;
 import com.fongmi.android.tv.ui.dialog.EpisodeListDialog;
 import com.fongmi.android.tv.ui.dialog.InfoDialog;
 import com.fongmi.android.tv.ui.dialog.ReceiveDialog;
+import com.fongmi.android.tv.ui.dialog.QueueDialog;
 import com.fongmi.android.tv.ui.dialog.SubtitleDialog;
 import com.fongmi.android.tv.ui.dialog.TrackDialog;
 import com.fongmi.android.tv.utils.Clock;
@@ -350,6 +353,7 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mBinding.control.action.opening.setOnClickListener(view -> onOpening());
         mBinding.control.action.danmaku.setOnClickListener(view -> onDanmaku());
         mBinding.control.action.episodes.setOnClickListener(view -> onEpisodes());
+        mBinding.control.action.queue.setOnClickListener(view -> onQueue());
         mBinding.control.action.text.setOnLongClickListener(view -> onTextLong());
         mBinding.control.action.speed.setOnLongClickListener(view -> onSpeedLong());
         mBinding.control.action.reset.setOnLongClickListener(view -> onResetToggle());
@@ -863,6 +867,35 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
 
     private void onEpisodes() {
         EpisodeListDialog.create(this).episodes(mEpisodeAdapter.getItems()).show();
+    }
+
+    private void onQueue() {
+        QueueDialog.create(this).setListener(item -> playQueue(item)).show();
+    }
+
+    private void playQueue(Queue item) {
+        VodConfig.setSiteKey(item.getSiteKey());
+        mHistory = History.find(item.getSiteKey() + AppDatabase.SYMBOL + item.getVodId());
+        if (mHistory == null) {
+            mHistory = new History();
+            mHistory.setKey(item.getSiteKey() + AppDatabase.SYMBOL + item.getVodId());
+            mHistory.setCid(VodConfig.getCid());
+            mHistory.setVodName(item.getVodName());
+            mHistory.setVodPic(item.getVodPic());
+        }
+        mHistory.setVodRemarks(item.getEpisodeName());
+        mHistory.setEpisodeUrl(item.getEpisodeUrl());
+        QueueService.get().remove(item.getId());
+        // Reset flags and episodes to trigger fresh load
+        mFlagAdapter.clear();
+        mEpisodeAdapter.clear();
+        // Set the current episode
+        Episode episode = Episode.create(item.getEpisodeName(), item.getEpisodeUrl());
+        episode.toggle();
+        mFlagAdapter.add(Flag.create("", List.of(episode)));
+        mEpisodeAdapter.addAll(List.of(episode));
+        setQualityVisible(false);
+        onRefresh();
     }
 
     private void onChoose() {
