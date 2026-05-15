@@ -25,6 +25,11 @@
     <string name="detail_quality">畫質</string>
     <string name="detail_content">簡介</string>
     <string name="detail_search">快搜「<xliff:g name="name">%s</xliff:g>」</string>
+    <string name="queue">播放佇列</string>
+    <string name="depot">倉庫</string>
+    <string name="depot_default">默認</string>
+    <string name="depot_manager">倉庫管理</string>
+    <string name="depot_empty">暫無倉庫</string>
 
     <!-- Device -->
     <string name="device_select">選擇裝置</string>

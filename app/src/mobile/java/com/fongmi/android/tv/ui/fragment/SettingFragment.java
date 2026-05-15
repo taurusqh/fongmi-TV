@@ -20,6 +20,7 @@ import com.fongmi.android.tv.api.config.LiveConfig;
 import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.api.config.WallConfig;
 import com.fongmi.android.tv.bean.Config;
+import com.fongmi.android.tv.bean.Depot;
 import com.fongmi.android.tv.bean.Live;
 import com.fongmi.android.tv.bean.Site;
 import com.fongmi.android.tv.databinding.FragmentSettingBinding;
@@ -55,7 +56,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingFragment extends BaseFragment implements ConfigCallback, SiteCallback, LiveCallback {
+public class SettingFragment extends BaseFragment implements ConfigCallback, SiteCallback, LiveCallback, DepotDialog.OnDepotListener {
 
     private FragmentSettingBinding mBinding;
     private String[] size;
@@ -223,7 +224,12 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
     }
 
     private void onDepot(View view) {
-        DepotDialog.create(this).show();
+        DepotDialog.create(this).setListener(this).show();
+    }
+
+    @Override
+    public void onDepotSwitch(Depot item) {
+        setConfig(Config.find(item, 0));
     }
 
     private void onVodHome(View view) {

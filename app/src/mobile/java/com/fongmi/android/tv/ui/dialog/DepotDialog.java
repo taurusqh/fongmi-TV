@@ -1,11 +1,8 @@
 package com.fongmi.android.tv.ui.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -16,8 +13,10 @@ import com.fongmi.android.tv.databinding.DialogDepotBinding;
 import com.fongmi.android.tv.service.DepotService;
 import com.fongmi.android.tv.ui.adapter.DepotAdapter;
 import com.fongmi.android.tv.ui.custom.SpaceItemDecoration;
+import com.fongmi.android.tv.utils.Notify;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+// 多仓管理对话框，显示仓库列表，支持选择切换和删除
 public class DepotDialog implements DepotAdapter.OnClickListener {
 
     private DialogDepotBinding binding;
@@ -71,11 +70,11 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
 
     private void setDialog() {
         if (adapter.getItemCount() == 0) {
-            // Even if empty, show dialog with message
+            Notify.show(R.string.depot_empty);
+            return;
         }
         dialog.getWindow().setDimAmount(0);
         dialog.show();
-        // Set dialog width
         if (dialog.getWindow() != null) {
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }

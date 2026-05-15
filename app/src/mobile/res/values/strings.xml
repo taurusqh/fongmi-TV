@@ -29,6 +29,7 @@
     <string name="depot">Depot</string>
     <string name="depot_default">Default</string>
     <string name="depot_manager">Depot Manager</string>
+    <string name="depot_empty">No depots yet</string>
 
     <!-- Device -->
     <string name="device_select">Select devices</string>

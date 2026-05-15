@@ -4,6 +4,7 @@ import com.fongmi.android.tv.bean.Depot;
 
 import java.util.List;
 
+// 多仓管理服务，支持配置仓库地址的增删和默认仓切换
 public class DepotService {
 
     private static DepotService instance;
@@ -21,12 +22,14 @@ public class DepotService {
         return Depot.getDefault();
     }
 
-    public void add(String url, String name) {
+    public boolean add(String url, String name) {
+        if (url == null || url.isEmpty()) return false;
         Depot depot = new Depot();
         depot.setUrl(url);
         depot.setName(name);
         if (Depot.getAll().isEmpty()) depot.setDefault(true);
         depot.save();
+        return true;
     }
 
     public void setDefault(long id) {

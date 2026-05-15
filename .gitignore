@@ -9,5 +9,8 @@
 lib-*.aar
 /Release
 /downloads
-download-*.*
-list-zip.*
+/docs
+*.bat
+*.ps1
+*.sh
+*.md
