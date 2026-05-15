@@ -13,7 +13,7 @@
         android:layout_toStartOf="@+id/defaultIcon"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/text"
+        android:textColor="@color/white"
         android:textSize="14sp"
         tools:text="仓库名称" />
 
@@ -26,7 +26,7 @@
         android:layout_toStartOf="@+id/defaultIcon"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/text_secondary"
+        android:textColor="@color/white_60"
         android:textSize="12sp"
         tools:text="http://example.com/config.json" />
 
@@ -38,7 +38,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="8dp"
         android:text="@string/depot_default"
-        android:textColor="@color/text_secondary"
+        android:textColor="@color/white_60"
         android:textSize="12sp"
         android:visibility="gone"
         tools:visibility="visible" />
@@ -50,6 +50,6 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:src="@drawable/ic_vod_delete"
-        android:contentDescription="@string/delete" />
+        android:contentDescription="@string/menu_delete" />
 
 </RelativeLayout>
