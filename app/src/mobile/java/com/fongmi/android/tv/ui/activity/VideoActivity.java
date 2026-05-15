@@ -874,7 +874,12 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
     }
 
     private void playQueue(Queue item) {
-        VodConfig.setSiteKey(item.getSiteKey());
+        Site site = VodConfig.getSite(item.getSiteKey());
+        if (site.getKey().isEmpty()) {
+            Notify.show("Site not found");
+            return;
+        }
+        VodConfig.get().setHome(site);
         mHistory = History.find(item.getSiteKey() + AppDatabase.SYMBOL + item.getVodId());
         if (mHistory == null) {
             mHistory = new History();
