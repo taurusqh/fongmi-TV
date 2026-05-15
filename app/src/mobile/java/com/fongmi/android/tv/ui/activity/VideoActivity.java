@@ -886,14 +886,12 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         mHistory.setVodRemarks(item.getEpisodeName());
         mHistory.setEpisodeUrl(item.getEpisodeUrl());
         QueueService.get().remove(item.getId());
-        // Reset flags and episodes to trigger fresh load
-        mFlagAdapter.clear();
-        mEpisodeAdapter.clear();
-        // Set the current episode
         Episode episode = Episode.create(item.getEpisodeName(), item.getEpisodeUrl());
         episode.toggle();
-        mFlagAdapter.add(Flag.create("", List.of(episode)));
-        mEpisodeAdapter.addAll(List.of(episode));
+        Flag flag = Flag.create("");
+        flag.getEpisodes().add(episode);
+        mFlagAdapter.addAll(List.of(flag));
+        mEpisodeAdapter.addAll(flag.getEpisodes());
         setQualityVisible(false);
         onRefresh();
     }
