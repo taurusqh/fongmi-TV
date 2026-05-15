@@ -34,6 +34,7 @@
     <string name="depot_add">添加</string>
     <string name="depot_url_empty">地址不能为空</string>
     <string name="depot_added">添加成功</string>
+    <string name="depot_switched">切换成功</string>
 
     <!-- Device -->
     <string name="device_select">选择装置</string>

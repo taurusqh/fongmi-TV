@@ -229,7 +229,26 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
 
     @Override
     public void onDepotSwitch(Depot item) {
-        setConfig(Config.find(item, 0));
+        Config config = Config.find(item, 0);
+        VodConfig.load(config, new Callback() {
+            @Override
+            public void start() {
+                Notify.progress(requireActivity());
+            }
+
+            @Override
+            public void success() {
+                Notify.dismiss();
+                Notify.show(R.string.depot_switched);
+                mBinding.vodUrl.setText(VodConfig.getDesc());
+            }
+
+            @Override
+            public void error(String msg) {
+                Notify.dismiss();
+                Notify.show(msg);
+            }
+        });
     }
 
     private void onVodHome(View view) {
