@@ -24,12 +24,12 @@
     <string name="detail_episode">选集</string>
     <string name="detail_quality">画质</string>
     <string name="detail_content">简介</string>
-    <string name=”detail_search”>快搜”<xliff:g name=”name”>%s</xliff:g>”</string>
-    <string name=”queue”>播放队列</string>
-    <string name=”depot”>仓库</string>
-    <string name=”depot_default”>默认</string>
-    <string name=”depot_manager”>仓库管理</string>
-    <string name=”depot_empty”>暂无仓库</string>
+    <string name="detail_search">快搜"<xliff:g name="name">%s</xliff:g>"</string>
+    <string name="queue">播放队列</string>
+    <string name="depot">仓库</string>
+    <string name="depot_default">默认</string>
+    <string name="depot_manager">仓库管理</string>
+    <string name="depot_empty">暂无仓库</string>
 
     <!-- Device -->
     <string name="device_select">选择装置</string>
