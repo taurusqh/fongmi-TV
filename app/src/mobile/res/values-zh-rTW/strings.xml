@@ -30,6 +30,10 @@
     <string name="depot_default">默認</string>
     <string name="depot_manager">倉庫管理</string>
     <string name="depot_empty">暫無倉庫</string>
+    <string name="depot_url_hint">輸入倉庫位址</string>
+    <string name="depot_add">新增</string>
+    <string name="depot_url_empty">位址不能為空</string>
+    <string name="depot_added">新增成功</string>
 
     <!-- Device -->
     <string name="device_select">選擇裝置</string>

@@ -1,6 +1,7 @@
 package com.fongmi.android.tv.ui.dialog;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -16,7 +17,7 @@ import com.fongmi.android.tv.ui.custom.SpaceItemDecoration;
 import com.fongmi.android.tv.utils.Notify;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-// 多仓管理对话框，显示仓库列表，支持选择切换和删除
+// 多仓管理对话框，显示仓库列表，支持添加、切换和删除
 public class DepotDialog implements DepotAdapter.OnClickListener {
 
     private DialogDepotBinding binding;
@@ -58,6 +59,7 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
     public void show() {
         setRecyclerView();
         setDialog();
+        setEvent();
     }
 
     private void setRecyclerView() {
@@ -69,14 +71,29 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
     }
 
     private void setDialog() {
-        if (adapter.getItemCount() == 0) {
-            Notify.show(R.string.depot_empty);
-            return;
-        }
         dialog.getWindow().setDimAmount(0);
         dialog.show();
         if (dialog.getWindow() != null) {
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+    }
+
+    private void setEvent() {
+        binding.add.setOnClickListener(view -> onAdd());
+    }
+
+    private void onAdd() {
+        String url = binding.url.getText().toString().trim();
+        if (TextUtils.isEmpty(url)) {
+            Notify.show(R.string.depot_url_empty);
+            return;
+        }
+        if (DepotService.get().add(url, url)) {
+            Notify.show(R.string.depot_added);
+            binding.url.setText("");
+            adapter.setItems(DepotService.get().getAll());
+        } else {
+            Notify.show(R.string.depot_url_empty);
         }
     }
 
