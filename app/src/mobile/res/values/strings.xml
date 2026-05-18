@@ -31,6 +31,7 @@
     <string name="depot_manager">Depot Manager</string>
     <string name="depot_empty">No depots yet</string>
     <string name="depot_url_hint">Enter depot URL</string>
+    <string name="depot_name_hint">Enter depot name (optional)</string>
     <string name="depot_add">Add</string>
     <string name="depot_url_empty">URL cannot be empty</string>
     <string name="depot_added">Depot added</string>

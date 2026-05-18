@@ -31,6 +31,7 @@
     <string name="depot_manager">仓库管理</string>
     <string name="depot_empty">暂无仓库</string>
     <string name="depot_url_hint">输入仓库地址</string>
+    <string name="depot_name_hint">仓库名称（可选）</string>
     <string name="depot_add">添加</string>
     <string name="depot_url_empty">地址不能为空</string>
     <string name="depot_added">添加成功</string>

@@ -19,8 +19,10 @@ import com.fongmi.android.tv.ui.custom.CustomRecyclerView;
 import com.fongmi.android.tv.ui.custom.SpaceItemDecoration;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.Task;
+import com.fongmi.android.tv.utils.Util;
 import com.github.catvod.net.OkHttp;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -99,9 +101,13 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
             Notify.show(R.string.depot_url_empty);
             return;
         }
-        if (DepotService.get().add(url, url)) {
+        // 读取自定义名称，没有指定则用 URL 作为默认名称
+        String name = binding.name.getText().toString().trim();
+        if (TextUtils.isEmpty(name)) name = url;
+        if (DepotService.get().add(url, name)) {
             Notify.show(R.string.depot_added);
             binding.url.setText("");
+            binding.name.setText("");
             adapter.setItems(DepotService.get().getAll());
         } else {
             Notify.show(R.string.depot_url_empty);
@@ -126,7 +132,21 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
                     return;
                 }
                 String body = res.body().string();
+                // fix: 兼容 JSON 对象包 urls 数组的格式
+                if (body != null && body.startsWith("{")) {
+                    try {
+                        JsonObject obj = App.gson().fromJson(body, JsonObject.class);
+                        if (obj.has("urls")) body = obj.getAsJsonArray("urls").toString();
+                    } catch (Exception ignored) {
+                    }
+                }
                 List<Depot> items = Depot.arrayFrom(body);
+                // 子仓库的 URL 可能位于 api 字段而非 url 字段，做兼容映射
+                for (Depot item : items) {
+                    if (TextUtils.isEmpty(item.getUrl()) && !TextUtils.isEmpty(item.getApi())) {
+                        item.setUrl(item.getApi());
+                    }
+                }
                 App.post(() -> {
                     Notify.dismiss();
                     if (items.isEmpty()) {
@@ -162,6 +182,12 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
             @Override
             public void onItemDelete(Depot item) {
             }
+
+            @Override
+            public void onItemLongClick(Depot item) {
+                // 子仓库列表长按复制地址
+                Util.copy(item.getUrl());
+            }
         });
         subAdapter.setItems(items);
         recycler.setAdapter(subAdapter);
@@ -174,6 +200,12 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
         if (subDialog.getWindow() != null) {
             subDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+    }
+
+    @Override
+    public void onItemLongClick(Depot item) {
+        // 长按复制仓库地址到剪贴板
+        Util.copy(item.getUrl());
     }
 
     @Override

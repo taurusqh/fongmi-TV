@@ -21,6 +21,7 @@ public class DepotAdapter extends BaseDiffAdapter<Depot, DepotAdapter.ViewHolder
     public interface OnClickListener {
         void onItemClick(Depot item);
         void onItemDelete(Depot item);
+        void onItemLongClick(Depot item);
     }
 
     @NonNull
@@ -37,6 +38,7 @@ public class DepotAdapter extends BaseDiffAdapter<Depot, DepotAdapter.ViewHolder
         holder.binding.defaultIcon.setVisibility(item.isDefault() ? View.VISIBLE : View.GONE);
         holder.binding.delete.setVisibility(item.isDefault() ? View.GONE : View.VISIBLE);
         holder.binding.getRoot().setOnClickListener(view -> listener.onItemClick(item));
+        holder.binding.getRoot().setOnLongClickListener(view -> { listener.onItemLongClick(item); return true; });
         holder.binding.delete.setOnClickListener(view -> listener.onItemDelete(item));
     }
 
