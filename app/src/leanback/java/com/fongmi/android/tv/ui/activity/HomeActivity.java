@@ -409,7 +409,11 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
 
     @Override
     public void onItemClick(History item) {
-        VideoActivity.start(this, item.getSiteKey(), item.getVodId(), item.getVodName(), item.getVodPic());
+        if (!TextUtils.isEmpty(VodConfig.get().getSite(item.getSiteKey()).getKey())) {
+            VideoActivity.start(this, item.getSiteKey(), item.getVodId(), item.getVodName(), item.getVodPic());
+        } else {
+            SearchActivity.start(this, item.getVodName());
+        }
     }
 
     @Override

@@ -1128,6 +1128,8 @@ public class VideoActivity extends PlaybackActivity implements Clock.Callback, C
         history.setKey(getHistoryKey());
         history.setCid(VodConfig.getCid());
         history.setVodName(item.getName());
+        history.setSiteName(getSite().getName());
+        history.setDepotName(VodConfig.get().getConfig().getName());
         history.findEpisode(item.getFlags());
         return history;
     }

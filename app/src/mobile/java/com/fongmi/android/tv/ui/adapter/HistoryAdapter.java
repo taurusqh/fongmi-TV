@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.bean.History;
 import com.fongmi.android.tv.databinding.AdapterVodBinding;
 import com.fongmi.android.tv.utils.ImgUtil;
@@ -31,6 +30,8 @@ public class HistoryAdapter extends BaseDiffAdapter<History, HistoryAdapter.View
         void onItemDelete(History item);
 
         boolean onLongClick();
+
+        void onItemLongClick(History item);
     }
 
     public void setSize(int[] size) {
@@ -52,7 +53,7 @@ public class HistoryAdapter extends BaseDiffAdapter<History, HistoryAdapter.View
     public void clear() {
         super.clear();
         setDelete(false);
-        History.delete(VodConfig.getCid());
+        History.deleteAll();
     }
 
     @NonNull
@@ -81,7 +82,10 @@ public class HistoryAdapter extends BaseDiffAdapter<History, HistoryAdapter.View
     }
 
     private void setClickListener(View root, History item) {
-        root.setOnLongClickListener(view -> listener.onLongClick());
+        root.setOnLongClickListener(view -> {
+            listener.onItemLongClick(item);
+            return true;
+        });
         root.setOnClickListener(view -> {
             if (isDelete()) listener.onItemDelete(item);
             else listener.onItemClick(item);

@@ -138,13 +138,17 @@ public class SearchFragment extends BaseFragment implements MenuProvider, WordAd
         collect(keyword);
     }
 
+    private boolean isExact() {
+        return mBinding.chipExact.isChecked();
+    }
+
     private void collect(String keyword) {
         FragmentManager fm = requireActivity().getSupportFragmentManager();
         String collectTag = CollectFragment.class.getSimpleName();
         if (fm.findFragmentByTag(collectTag) != null) return;
         String searchTag = SearchFragment.class.getSimpleName();
         FragmentTransaction ft = fm.beginTransaction().setTransition(TRANSIT_FRAGMENT_OPEN);
-        ft.add(R.id.container, CollectFragment.newInstance(keyword), collectTag);
+        ft.add(R.id.container, CollectFragment.newInstance(keyword, isExact()), collectTag);
         Optional.ofNullable(fm.findFragmentByTag(searchTag)).ifPresent(ft::hide);
         ft.setReorderingAllowed(true).addToBackStack(null).commit();
     }

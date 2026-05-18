@@ -63,4 +63,14 @@ public class Migrations {
             database.execSQL("CREATE TABLE Depot (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `url` TEXT, `name` TEXT, `isDefault` INTEGER NOT NULL, `sort` INTEGER NOT NULL, `createTime` INTEGER NOT NULL, `api` TEXT, `ext` TEXT, `jar` TEXT, `proxy` TEXT)");
         }
     };
+
+    public static final Migration MIGRATION_37_38 = new Migration(37, 38) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE History_Backup (`key` TEXT NOT NULL, `cid` INTEGER NOT NULL, `vodPic` TEXT, `vodName` TEXT, `vodFlag` TEXT, `vodRemarks` TEXT, `episodeUrl` TEXT, `revSort` INTEGER NOT NULL, `revPlay` INTEGER NOT NULL, `createTime` INTEGER NOT NULL, `opening` INTEGER NOT NULL, `ending` INTEGER NOT NULL, `position` INTEGER NOT NULL, `duration` INTEGER NOT NULL, `speed` REAL NOT NULL, `scale` INTEGER NOT NULL, `siteName` TEXT, `depotName` TEXT, PRIMARY KEY(`key`, `cid`))");
+            database.execSQL("INSERT INTO History_Backup SELECT `key`, `cid`, `vodPic`, `vodName`, `vodFlag`, `vodRemarks`, `episodeUrl`, `revSort`, `revPlay`, `createTime`, `opening`, `ending`, `position`, `duration`, `speed`, `scale`, NULL, NULL FROM History");
+            database.execSQL("DROP TABLE History");
+            database.execSQL("ALTER TABLE History_Backup RENAME TO History");
+        }
+    };
 }

@@ -24,11 +24,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-@Entity
+@Entity(primaryKeys = {"key", "cid"})
 public class History implements Diffable<History> {
 
     @NonNull
-    @PrimaryKey
     @SerializedName("key")
     private String key;
     @SerializedName("vodPic")
@@ -61,6 +60,10 @@ public class History implements Diffable<History> {
     private int scale;
     @SerializedName("cid")
     private int cid;
+    @SerializedName("siteName")
+    private String siteName;
+    @SerializedName("depotName")
+    private String depotName;
 
     private transient long updateTime;
 
@@ -85,7 +88,7 @@ public class History implements Diffable<History> {
     }
 
     public static List<History> get() {
-        return get(VodConfig.getCid());
+        return AppDatabase.get().getHistoryDao().find(System.currentTimeMillis() - Constant.HISTORY_TIME);
     }
 
     public static List<History> get(int cid) {
@@ -93,12 +96,12 @@ public class History implements Diffable<History> {
     }
 
     public static History find(String key) {
-        return AppDatabase.get().getHistoryDao().find(VodConfig.getCid(), key);
+        return AppDatabase.get().getHistoryDao().find(key);
     }
 
     public static List<History> findByName(String name) {
         try {
-            return AppDatabase.get().getHistoryDao().findByName(VodConfig.getCid(), name);
+            return AppDatabase.get().getHistoryDao().findByName(name);
         } catch (Exception e) {
             return Collections.emptyList();
         }
@@ -106,6 +109,10 @@ public class History implements Diffable<History> {
 
     public static void delete(int cid) {
         AppDatabase.get().getHistoryDao().delete(cid);
+    }
+
+    public static void deleteAll() {
+        AppDatabase.get().getHistoryDao().delete();
     }
 
     public static void sync(List<History> targets) {
@@ -258,7 +265,20 @@ public class History implements Diffable<History> {
     }
 
     public String getSiteName() {
+        if (!TextUtils.isEmpty(siteName)) return siteName;
         return VodConfig.get().getSite(getSiteKey()).getName();
+    }
+
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
+    }
+
+    public String getDepotName() {
+        return depotName;
+    }
+
+    public void setDepotName(String depotName) {
+        this.depotName = depotName;
     }
 
     public String getSiteKey() {
@@ -340,7 +360,7 @@ public class History implements Diffable<History> {
     }
 
     public History delete() {
-        AppDatabase.get().getHistoryDao().delete(VodConfig.getCid(), getKey());
+        AppDatabase.get().getHistoryDao().delete(getKey(), getCid());
         AppDatabase.get().getTrackDao().delete(getKey());
         return this;
     }
@@ -367,12 +387,12 @@ public class History implements Diffable<History> {
     public boolean equals(@Nullable Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof History it)) return false;
-        return Objects.equals(getKey(), it.getKey());
+        return Objects.equals(getKey(), it.getKey()) && getCid() == it.getCid();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getKey());
+        return Objects.hash(getKey(), getCid());
     }
 
     @NonNull

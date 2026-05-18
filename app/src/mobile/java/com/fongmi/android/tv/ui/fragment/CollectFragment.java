@@ -1,10 +1,12 @@
 package com.fongmi.android.tv.ui.fragment;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -41,17 +43,21 @@ public class CollectFragment extends BaseFragment implements MenuProvider, Colle
     private CustomScroller mScroller;
     private SiteViewModel mViewModel;
     private List<Site> mSites;
+    private String mKeyword;
+    private boolean mExact;
+    private int mResultCount;
 
-    public static CollectFragment newInstance(String keyword) {
+    public static CollectFragment newInstance(String keyword, boolean exact) {
         Bundle args = new Bundle();
         args.putString("keyword", keyword);
+        args.putBoolean("exact", exact);
         CollectFragment fragment = new CollectFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     private String getKeyword() {
-        return getArguments().getString("keyword");
+        return mKeyword;
     }
 
     @Override
@@ -71,6 +77,9 @@ public class CollectFragment extends BaseFragment implements MenuProvider, Colle
 
     @Override
     protected void initView() {
+        Bundle args = getArguments();
+        mKeyword = args.getString("keyword");
+        mExact = args.getBoolean("exact", true);
         mScroller = new CustomScroller(this);
         setRecyclerView();
         setViewModel();
@@ -135,17 +144,37 @@ public class CollectFragment extends BaseFragment implements MenuProvider, Colle
 
     private void setCollect(Result result) {
         if (result == null || result.getList().isEmpty()) return;
-        if (mCollectAdapter.getPosition() == 0) mSearchAdapter.addAll(result.getList());
-        mCollectAdapter.add(Collect.create(result.getList()));
-        mCollectAdapter.add(result.getList());
+        List<Vod> filtered = filterResults(result.getList());
+        if (filtered.isEmpty()) return;
+        mResultCount++;
+        updateSearchInfo();
+        if (mCollectAdapter.getPosition() == 0) mSearchAdapter.addAll(filtered);
+        mCollectAdapter.add(Collect.create(filtered));
+        mCollectAdapter.add(filtered);
     }
 
     private void setSearch(Result result) {
         if (result == null) return;
         mScroller.endLoading(result);
         boolean same = !result.getList().isEmpty() && mCollectAdapter.getActivated().getSite().equals(result.getVod().getSite());
-        if (same) mCollectAdapter.getActivated().getList().addAll(result.getList());
-        if (same) mSearchAdapter.addAll(result.getList());
+        if (same) {
+            List<Vod> filtered = filterResults(result.getList());
+            mCollectAdapter.getActivated().getList().addAll(filtered);
+            mSearchAdapter.addAll(filtered);
+        }
+    }
+
+    private List<Vod> filterResults(List<Vod> items) {
+        if (mExact) {
+            return items.stream().filter(vod -> vod.getName().equals(mKeyword)).toList();
+        } else {
+            return items.stream().filter(vod -> vod.getName().contains(mKeyword)).toList();
+        }
+    }
+
+    private void updateSearchInfo() {
+        mBinding.searchInfo.setVisibility(View.VISIBLE);
+        mBinding.searchInfo.setText(mResultCount + "/" + mSites.size());
     }
 
     @Override

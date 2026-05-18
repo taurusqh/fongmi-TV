@@ -3,6 +3,7 @@ package com.fongmi.android.tv.ui.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,6 +15,7 @@ import androidx.viewbinding.ViewBinding;
 
 import com.fongmi.android.tv.Product;
 import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.bean.History;
 import com.fongmi.android.tv.databinding.ActivityHistoryBinding;
 import com.fongmi.android.tv.event.RefreshEvent;
@@ -85,7 +87,11 @@ public class HistoryActivity extends BaseActivity implements HistoryAdapter.OnCl
 
     @Override
     public void onItemClick(History item) {
-        VideoActivity.start(this, item.getSiteKey(), item.getVodId(), item.getVodName(), item.getVodPic());
+        if (siteExists(item.getSiteKey())) {
+            VideoActivity.start(this, item.getSiteKey(), item.getVodId(), item.getVodName(), item.getVodPic());
+        } else {
+            SearchActivity.start(this, item.getVodName());
+        }
     }
 
     @Override
@@ -97,8 +103,16 @@ public class HistoryActivity extends BaseActivity implements HistoryAdapter.OnCl
 
     @Override
     public boolean onLongClick() {
-        mAdapter.setDelete(!mAdapter.isDelete());
         return true;
+    }
+
+    @Override
+    public void onItemLongClick(History item) {
+        SearchActivity.start(this, item.getVodName());
+    }
+
+    private boolean siteExists(String siteKey) {
+        return !TextUtils.isEmpty(VodConfig.get().getSite(siteKey).getKey());
     }
 
     @Override

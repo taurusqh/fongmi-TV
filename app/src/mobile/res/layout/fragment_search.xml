@@ -31,6 +31,35 @@
 
     </com.google.android.material.appbar.MaterialToolbar>
 
+    <com.google.android.material.chip.ChipGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        app:singleSelection="true"
+        app:checkedChip="@+id/chip_exact">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_exact"
+            style="@style/Widget.Material3.Chip.Assist.Elevated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="精确"
+            android:textColor="@color/white"
+            app:chipBackgroundColor="@color/black_40" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_fuzzy"
+            style="@style/Widget.Material3.Chip.Assist.Elevated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="模糊"
+            android:textColor="@color/white"
+            app:chipBackgroundColor="@color/black_40" />
+
+    </com.google.android.material.chip.ChipGroup>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
