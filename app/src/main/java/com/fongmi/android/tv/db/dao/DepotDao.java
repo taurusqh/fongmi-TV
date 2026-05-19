@@ -13,6 +13,9 @@ public abstract class DepotDao extends BaseDao<Depot> {
     @Query("SELECT * FROM Depot ORDER BY sort ASC, createTime DESC")
     public abstract List<Depot> findAll();
 
+    @Query("SELECT * FROM Depot WHERE id = :id LIMIT 1")
+    public abstract Depot findById(long id);
+
     @Query("SELECT * FROM Depot WHERE isDefault = 1 LIMIT 1")
     public abstract Depot getDefault();
 
@@ -24,4 +27,10 @@ public abstract class DepotDao extends BaseDao<Depot> {
 
     @Query("DELETE FROM Depot WHERE id = :id")
     public abstract void delete(long id);
+
+    @Query("UPDATE Depot SET warehouses = :warehouses WHERE id = :id")
+    public abstract void setWarehouses(long id, String warehouses);
+
+    @Query("UPDATE Depot SET activeWarehouse = :name WHERE id = :id")
+    public abstract void setActiveWarehouse(long id, String name);
 }

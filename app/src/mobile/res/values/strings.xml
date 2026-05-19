@@ -36,6 +36,7 @@
     <string name="depot_url_empty">URL cannot be empty</string>
     <string name="depot_added">Depot added</string>
     <string name="depot_switched">Switched successfully</string>
+    <string name="depot_switch_title">Switch Warehouse</string>
 
     <!-- Device -->
     <string name="device_select">Select devices</string>

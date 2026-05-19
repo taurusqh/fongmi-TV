@@ -35,6 +35,10 @@ public class Depot implements Diffable<Depot> {
     @SerializedName("proxy")
     private String proxy;
 
+    // fix: 持久化缓存子仓库列表和当前选中仓库
+    private String warehouses;
+    private String activeWarehouse;
+
     public Depot() {
         this.createTime = System.currentTimeMillis();
     }
@@ -139,6 +143,22 @@ public class Depot implements Diffable<Depot> {
 
     public void setProxy(String proxy) {
         this.proxy = proxy;
+    }
+
+    public String getWarehouses() {
+        return warehouses;
+    }
+
+    public void setWarehouses(String warehouses) {
+        this.warehouses = warehouses;
+    }
+
+    public String getActiveWarehouse() {
+        return activeWarehouse;
+    }
+
+    public void setActiveWarehouse(String activeWarehouse) {
+        this.activeWarehouse = activeWarehouse;
     }
 
     public void save() {

@@ -40,6 +40,8 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
 
     public interface OnDepotListener {
         void onDepotSwitch(Depot item);
+        // fix: 仓库列表缓存更新后通知 UI 刷新
+        void onWarehouseChanged();
     }
 
     public static DepotDialog create(Activity activity) {
@@ -104,14 +106,63 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
         // 读取自定义名称，没有指定则用 URL 作为默认名称
         String name = binding.name.getText().toString().trim();
         if (TextUtils.isEmpty(name)) name = url;
-        if (DepotService.get().add(url, name)) {
+        long depotId = DepotService.get().add(url, name);
+        if (depotId != -1) {
             Notify.show(R.string.depot_added);
             binding.url.setText("");
             binding.name.setText("");
             refreshList();
+            // fix: 添加后自动解析仓库列表并缓存
+            autoParseDepot(depotId, url);
         } else {
             Notify.show(R.string.depot_url_empty);
         }
+    }
+
+    // fix: 自动解析多仓 JSON，缓存子仓库列表 + 自动切换到第一个仓库
+    private void autoParseDepot(long depotId, String url) {
+        Notify.progress(dialog.getContext());
+        Task.execute(() -> {
+            try {
+                Response res = OkHttp.newCall(url).execute();
+                if (!res.isSuccessful()) {
+                    App.post(() -> { Notify.dismiss(); Notify.show("HTTP " + res.code()); });
+                    return;
+                }
+                String body = res.body().string();
+                if (body != null && body.startsWith("{")) {
+                    try {
+                        JsonObject obj = App.gson().fromJson(body, JsonObject.class);
+                        if (obj.has("urls")) body = obj.getAsJsonArray("urls").toString();
+                    } catch (Exception ignored) { }
+                }
+                List<Depot> items = Depot.arrayFrom(body);
+                for (Depot item : items) {
+                    if (TextUtils.isEmpty(item.getUrl()) && !TextUtils.isEmpty(item.getApi())) {
+                        item.setUrl(item.getApi());
+                    }
+                }
+                if (!items.isEmpty()) {
+                    // 缓存子仓库列表到 depot
+                    DepotService.get().saveWarehouseList(depotId, body);
+                    // 自动选取第一个仓库
+                    Depot first = items.get(0);
+                    DepotService.get().setActiveWarehouse(depotId, first.getName());
+                    App.post(() -> {
+                        Notify.dismiss();
+                        refreshList();
+                        if (listener != null) {
+                            listener.onDepotSwitch(first);
+                            listener.onWarehouseChanged();
+                        }
+                    });
+                } else {
+                    App.post(() -> { Notify.dismiss(); Notify.show(R.string.depot_empty); });
+                }
+            } catch (Exception e) {
+                App.post(() -> { Notify.dismiss(); Notify.show(e.getMessage()); });
+            }
+        });
     }
 
     // fix: 确保添加/删除后列表刷新

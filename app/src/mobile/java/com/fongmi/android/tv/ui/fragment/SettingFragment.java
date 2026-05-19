@@ -22,6 +22,7 @@ import com.fongmi.android.tv.api.config.WallConfig;
 import com.fongmi.android.tv.bean.Config;
 import com.fongmi.android.tv.bean.Depot;
 import com.fongmi.android.tv.bean.Live;
+import com.fongmi.android.tv.service.DepotService;
 import com.fongmi.android.tv.bean.Site;
 import com.fongmi.android.tv.databinding.FragmentSettingBinding;
 import com.fongmi.android.tv.db.AppDatabase;
@@ -47,7 +48,6 @@ import com.fongmi.android.tv.utils.ResUtil;
 import com.github.catvod.bean.Doh;
 import com.github.catvod.net.OkHttp;
 import com.github.catvod.utils.Path;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -98,6 +98,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         mBinding.versionText.setText(BuildConfig.VERSION_NAME);
         setOtherText();
         setCacheText();
+        updateActiveWarehouseText();
     }
 
     private void setOtherText() {
@@ -139,6 +140,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         mBinding.wallRefresh.setOnClickListener(this::setWallRefresh);
         mBinding.wallRefresh.setOnLongClickListener(this::onWallHistory);
         mBinding.depot.setOnClickListener(this::onDepot);
+        mBinding.activeWarehouse.setOnClickListener(this::onActiveWarehouseClick);
     }
 
     @Override
@@ -229,6 +231,9 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
 
     @Override
     public void onDepotSwitch(Depot item) {
+        // fix: 切换仓库时保存激活的仓库名
+        long depotId = DepotService.get().getDefaultId();
+        if (depotId != -1) DepotService.get().setActiveWarehouse(depotId, item.getName());
         Config config = Config.find(item, 0);
         VodConfig.load(config, new Callback() {
             @Override
@@ -241,6 +246,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
                 Notify.dismiss();
                 Notify.show(R.string.depot_switched);
                 mBinding.vodUrl.setText(VodConfig.getDesc());
+                updateActiveWarehouseText();
             }
 
             @Override
@@ -249,6 +255,40 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
                 Notify.show(msg);
             }
         });
+    }
+
+    // fix: 仓库缓存更新后刷新按钮文字
+    @Override
+    public void onWarehouseChanged() {
+        updateActiveWarehouseText();
+    }
+
+    // fix: 点击当前仓库名弹出列表切换
+    private void onActiveWarehouseClick(View view) {
+        long depotId = DepotService.get().getDefaultId();
+        if (depotId == -1) return;
+        List<Depot> warehouses = DepotService.get().getCachedWarehouses(depotId);
+        if (warehouses.isEmpty()) return;
+        String current = DepotService.get().getActiveWarehouseName();
+        String[] names = new String[warehouses.size()];
+        int checkedItem = -1;
+        for (int i = 0; i < warehouses.size(); i++) {
+            names[i] = warehouses.get(i).getName();
+            if (names[i].equals(current)) checkedItem = i;
+        }
+        new MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(R.string.depot_switch_title)
+                .setNegativeButton(R.string.dialog_negative, null)
+                .setSingleChoiceItems(names, checkedItem, (dialog, which) -> {
+                    dialog.dismiss();
+                    onDepotSwitch(warehouses.get(which));
+                }).show();
+    }
+
+    // fix: 读取当前仓库名并更新按钮
+    private void updateActiveWarehouseText() {
+        String name = DepotService.get().getActiveWarehouseName();
+        mBinding.activeWarehouse.setText(TextUtils.isEmpty(name) ? "" : name);
     }
 
     private void onVodHome(View view) {

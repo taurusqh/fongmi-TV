@@ -209,6 +209,17 @@
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/activeWarehouse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="end"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    tools:text="仓库A" />
+
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat

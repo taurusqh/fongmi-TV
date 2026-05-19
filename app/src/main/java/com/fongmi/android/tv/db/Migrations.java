@@ -73,4 +73,13 @@ public class Migrations {
             database.execSQL("ALTER TABLE History_Backup RENAME TO History");
         }
     };
+
+    // fix: 新增子仓库列表缓存和当前仓库名称字段
+    public static final Migration MIGRATION_38_39 = new Migration(38, 39) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE Depot ADD COLUMN warehouses TEXT DEFAULT NULL");
+            database.execSQL("ALTER TABLE Depot ADD COLUMN activeWarehouse TEXT DEFAULT NULL");
+        }
+    };
 }
