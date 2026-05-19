@@ -130,13 +130,19 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
                     return;
                 }
                 String body = res.body().string();
-                if (body != null && body.startsWith("{")) {
+                if (body == null || body.isEmpty()) {
+                    App.post(() -> { Notify.dismiss(); Notify.show(R.string.depot_empty); });
+                    return;
+                }
+                // fix: 兼容 JSON 对象包 urls 数组的格式
+                if (body.startsWith("{")) {
                     try {
                         JsonObject obj = App.gson().fromJson(body, JsonObject.class);
                         if (obj.has("urls")) body = obj.getAsJsonArray("urls").toString();
                     } catch (Exception ignored) { }
                 }
                 List<Depot> items = Depot.arrayFrom(body);
+                // fix: 子仓库的 URL 可能位于 api 字段而非 url 字段
                 for (Depot item : items) {
                     if (TextUtils.isEmpty(item.getUrl()) && !TextUtils.isEmpty(item.getApi())) {
                         item.setUrl(item.getApi());
@@ -160,7 +166,7 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
                     App.post(() -> { Notify.dismiss(); Notify.show(R.string.depot_empty); });
                 }
             } catch (Exception e) {
-                App.post(() -> { Notify.dismiss(); Notify.show(e.getMessage()); });
+                App.post(() -> { Notify.dismiss(); Notify.show(R.string.depot_parse_error); });
             }
         });
     }
@@ -188,8 +194,12 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
                     return;
                 }
                 String body = res.body().string();
+                if (body == null || body.isEmpty()) {
+                    App.post(() -> { Notify.dismiss(); Notify.show(R.string.depot_empty); });
+                    return;
+                }
                 // fix: 兼容 JSON 对象包 urls 数组的格式
-                if (body != null && body.startsWith("{")) {
+                if (body.startsWith("{")) {
                     try {
                         JsonObject obj = App.gson().fromJson(body, JsonObject.class);
                         if (obj.has("urls")) body = obj.getAsJsonArray("urls").toString();
@@ -217,7 +227,7 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
             } catch (IOException e) {
                 App.post(() -> {
                     Notify.dismiss();
-                    Notify.show(e.getMessage());
+                    Notify.show(R.string.depot_parse_error);
                 });
             }
         });

@@ -37,6 +37,7 @@
     <string name="depot_added">添加成功</string>
     <string name="depot_switched">切换成功</string>
     <string name="depot_switch_title">切换仓库</string>
+    <string name="depot_parse_error">仓库解析失败，请检查地址是否正确</string>
 
     <!-- Device -->
     <string name="device_select">选择装置</string>

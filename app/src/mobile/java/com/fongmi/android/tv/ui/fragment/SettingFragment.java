@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 
+import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.BuildConfig;
 import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.Setting;
@@ -45,11 +46,15 @@ import com.fongmi.android.tv.utils.FileChooser;
 import com.fongmi.android.tv.utils.FileUtil;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.PermissionUtil;
+import com.fongmi.android.tv.utils.Task;
 import com.fongmi.android.tv.utils.ResUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.JsonObject;
 import com.github.catvod.bean.Doh;
 import com.github.catvod.net.OkHttp;
 import com.github.catvod.utils.Path;
+
+import okhttp3.Response;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -265,7 +270,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         updateActiveWarehouseText();
     }
 
-    // fix: 点击当前仓库名弹出子仓库切换列表，无数据时提示去多仓管理解析
+    // fix: 点击当前仓库名弹出子仓库切换列表，无数据时自动解析
     private void onActiveWarehouseClick(View view) {
         long depotId = DepotService.get().getDefaultId();
         if (depotId == -1) {
@@ -274,9 +279,64 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         }
         List<Depot> warehouses = DepotService.get().getCachedWarehouses(depotId);
         if (warehouses.isEmpty()) {
-            Notify.show(R.string.depot_empty);
+            // fix: 无缓存数据时自动解析，避免一直显示"暂无仓库"
+            Depot defaultDepot = DepotService.get().getDefault();
+            if (defaultDepot != null) {
+                parseAndShowWarehouses(defaultDepot);
+            } else {
+                Notify.show(R.string.depot_empty);
+            }
             return;
         }
+        showWarehousePicker(depotId, warehouses);
+    }
+
+    // fix: 后台解析多仓 URL 并弹出子仓库列表
+    private void parseAndShowWarehouses(Depot depot) {
+        Notify.progress(requireActivity());
+        Task.execute(() -> {
+            try {
+                Response res = OkHttp.newCall(depot.getUrl()).execute();
+                if (!res.isSuccessful()) {
+                    App.post(() -> { Notify.dismiss(); Notify.show("HTTP " + res.code()); });
+                    return;
+                }
+                String body = res.body().string();
+                if (body == null || body.isEmpty()) {
+                    App.post(() -> { Notify.dismiss(); Notify.show(R.string.depot_empty); });
+                    return;
+                }
+                if (body.startsWith("{")) {
+                    try {
+                        JsonObject obj = App.gson().fromJson(body, JsonObject.class);
+                        if (obj.has("urls")) body = obj.getAsJsonArray("urls").toString();
+                    } catch (Exception ignored) { }
+                }
+                List<Depot> items = Depot.arrayFrom(body);
+                for (Depot item : items) {
+                    if (TextUtils.isEmpty(item.getUrl()) && !TextUtils.isEmpty(item.getApi())) {
+                        item.setUrl(item.getApi());
+                    }
+                }
+                if (!items.isEmpty()) {
+                    DepotService.get().saveWarehouseList(depot.getId(), body);
+                    DepotService.get().setActiveWarehouse(depot.getId(), items.get(0).getName());
+                    App.post(() -> {
+                        Notify.dismiss();
+                        updateActiveWarehouseText();
+                        showWarehousePicker(depot.getId(), items);
+                    });
+                } else {
+                    App.post(() -> { Notify.dismiss(); Notify.show(R.string.depot_empty); });
+                }
+            } catch (Exception e) {
+                App.post(() -> { Notify.dismiss(); Notify.show(R.string.depot_parse_error); });
+            }
+        });
+    }
+
+    // fix: 显示子仓库切换选择列表
+    private void showWarehousePicker(long depotId, List<Depot> warehouses) {
         String current = DepotService.get().getActiveWarehouseName();
         String[] names = new String[warehouses.size()];
         int checkedItem = -1;

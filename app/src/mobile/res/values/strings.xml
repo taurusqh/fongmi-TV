@@ -37,6 +37,7 @@
     <string name="depot_added">Depot added</string>
     <string name="depot_switched">Switched successfully</string>
     <string name="depot_switch_title">Switch Warehouse</string>
+    <string name="depot_parse_error">Depot parse failed, check the URL</string>
 
     <!-- Device -->
     <string name="device_select">Select devices</string>

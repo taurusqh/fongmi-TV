@@ -44,8 +44,14 @@ public class Depot implements Diffable<Depot> {
     }
 
     public static List<Depot> arrayFrom(String str) {
-        List<Depot> items = App.gson().fromJson(str, new com.google.gson.reflect.TypeToken<List<Depot>>() {}.getType());
-        return items == null ? Collections.emptyList() : items;
+        try {
+            List<Depot> items = App.gson().fromJson(str, new com.google.gson.reflect.TypeToken<List<Depot>>() {}.getType());
+            if (items == null) return Collections.emptyList();
+            items.removeIf(java.util.Objects::isNull);
+            return items;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     public static List<Depot> getAll() {
