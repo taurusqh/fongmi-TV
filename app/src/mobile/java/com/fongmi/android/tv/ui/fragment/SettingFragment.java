@@ -287,10 +287,14 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
                 }).show();
     }
 
-    // fix: 读取当前仓库名并更新按钮
+    // fix: 读取当前仓库名并更新按钮，无数据时显示"暂无仓库"提示
     private void updateActiveWarehouseText() {
         String name = DepotService.get().getActiveWarehouseName();
-        mBinding.activeWarehouse.setText(TextUtils.isEmpty(name) ? "" : name);
+        if (TextUtils.isEmpty(name)) {
+            mBinding.activeWarehouse.setText(R.string.depot_empty);
+        } else {
+            mBinding.activeWarehouse.setText(name);
+        }
     }
 
     private void onVodHome(View view) {
