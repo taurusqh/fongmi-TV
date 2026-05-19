@@ -36,7 +36,8 @@ public class DepotAdapter extends BaseDiffAdapter<Depot, DepotAdapter.ViewHolder
         holder.binding.name.setText(item.getName());
         holder.binding.url.setText(item.getUrl());
         holder.binding.defaultIcon.setVisibility(item.isDefault() ? View.VISIBLE : View.GONE);
-        holder.binding.delete.setVisibility(item.isDefault() ? View.GONE : View.VISIBLE);
+        // fix: 默认仓库也可以删除
+        holder.binding.delete.setVisibility(View.VISIBLE);
         holder.binding.getRoot().setOnClickListener(view -> listener.onItemClick(item));
         holder.binding.getRoot().setOnLongClickListener(view -> { listener.onItemLongClick(item); return true; });
         holder.binding.delete.setOnClickListener(view -> listener.onItemDelete(item));

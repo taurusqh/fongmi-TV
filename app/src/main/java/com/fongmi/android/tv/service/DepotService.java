@@ -39,4 +39,12 @@ public class DepotService {
     public void delete(long id) {
         Depot.delete(id);
     }
+
+    // fix: 删除默认仓库后，自动将第一个剩余仓库设为默认
+    public void initDefault() {
+        if (getDefault() == null) {
+            List<Depot> all = getAll();
+            if (!all.isEmpty()) setDefault(all.get(0).getId());
+        }
+    }
 }

@@ -28,7 +28,7 @@
     <string name="queue">播放佇列</string>
     <string name="depot">倉庫</string>
     <string name="depot_default">默認</string>
-    <string name="depot_manager">倉庫管理</string>
+    <string name="depot_manager">多倉管理</string>
     <string name="depot_empty">暫無倉庫</string>
     <string name="depot_url_hint">輸入倉庫位址</string>
     <string name="depot_name_hint">倉庫名稱（可選）</string>

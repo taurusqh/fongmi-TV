@@ -108,10 +108,15 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
             Notify.show(R.string.depot_added);
             binding.url.setText("");
             binding.name.setText("");
-            adapter.setItems(DepotService.get().getAll());
+            refreshList();
         } else {
             Notify.show(R.string.depot_url_empty);
         }
+    }
+
+    // fix: 确保添加/删除后列表刷新
+    private void refreshList() {
+        adapter.setItems(DepotService.get().getAll());
     }
 
     @Override
@@ -210,7 +215,10 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
 
     @Override
     public void onItemDelete(Depot item) {
+        boolean isDefault = item.isDefault();
         DepotService.get().delete(item.getId());
-        adapter.setItems(DepotService.get().getAll());
+        // fix: 删除默认仓库后，自动将第一个剩余仓库设为默认
+        if (isDefault) DepotService.get().initDefault();
+        refreshList();
     }
 }

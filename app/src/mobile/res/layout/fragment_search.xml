@@ -46,8 +46,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="精确"
-            android:textColor="@color/white"
-            app:chipBackgroundColor="@color/black_40" />
+            android:textColor="@color/chip_text"
+            app:chipBackgroundColor="@color/chip_bg" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_fuzzy"
@@ -55,8 +55,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="模糊"
-            android:textColor="@color/white"
-            app:chipBackgroundColor="@color/black_40" />
+            android:textColor="@color/chip_text"
+            app:chipBackgroundColor="@color/chip_bg" />
 
     </com.google.android.material.chip.ChipGroup>
 

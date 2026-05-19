@@ -10,10 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/defaultIcon"
+        android:layout_toStartOf="@+id/delete"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/black_90"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="14sp"
         tools:text="仓库名称" />
 
@@ -23,25 +23,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/name"
         android:layout_marginTop="4dp"
-        android:layout_toStartOf="@+id/defaultIcon"
+        android:layout_toStartOf="@+id/delete"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/black_60"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="12sp"
         tools:text="http://example.com/config.json" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/defaultIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="8dp"
-        android:text="@string/depot_default"
-        android:textColor="@color/black_60"
-        android:textSize="12sp"
-        android:visibility="gone"
-        tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/delete"
@@ -51,5 +38,18 @@
         android:layout_centerVertical="true"
         android:src="@drawable/ic_vod_delete"
         android:contentDescription="@string/menu_delete" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/defaultIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/delete"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="8dp"
+        android:text="@string/depot_default"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="12sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </RelativeLayout>

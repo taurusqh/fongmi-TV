@@ -74,7 +74,8 @@ public class CustomKeyDown extends GestureDetector.SimpleOnGestureListener imple
             speedLongPress = false;
             listener.onTouchEnd();
         }
-        if (changeSpeed && action == MotionEvent.ACTION_UP) listener.onSpeedEnd();
+        // fix: 倍速播放结束后重置 changeSpeed 标志，否则后续手势全失效
+        if (changeSpeed && action == MotionEvent.ACTION_UP) { listener.onSpeedEnd(); changeSpeed = false; }
         if (changeTime && action == MotionEvent.ACTION_UP) listener.onSeekEnd(time);
 
         // When in speed change mode, handle scroll directly without GestureDetector
