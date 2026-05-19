@@ -208,6 +208,8 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
                     if (items.isEmpty()) {
                         Notify.show(R.string.depot_empty);
                     } else {
+                        // fix: 手动解析后缓存子仓库列表，让仓库切换按钮能读取
+                        DepotService.get().saveWarehouseList(depot.getId(), body);
                         showSubDialog(items);
                     }
                 });
