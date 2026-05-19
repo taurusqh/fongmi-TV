@@ -196,6 +196,7 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
                     } catch (Exception ignored) {
                     }
                 }
+                final String warehouseJson = body;
                 List<Depot> items = Depot.arrayFrom(body);
                 // 子仓库的 URL 可能位于 api 字段而非 url 字段，做兼容映射
                 for (Depot item : items) {
@@ -209,7 +210,7 @@ public class DepotDialog implements DepotAdapter.OnClickListener {
                         Notify.show(R.string.depot_empty);
                     } else {
                         // fix: 手动解析后缓存子仓库列表，让仓库切换按钮能读取
-                        DepotService.get().saveWarehouseList(depot.getId(), body);
+                        DepotService.get().saveWarehouseList(depot.getId(), warehouseJson);
                         showSubDialog(items);
                     }
                 });
