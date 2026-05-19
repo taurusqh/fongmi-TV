@@ -4,5 +4,7 @@
     <color name="primaryDark">@color/light_blue_700</color>
     <color name="accent">@color/light_blue_500</color>
     <color name="indicator">@color/black_50</color>
+    <!-- fix: 暗色主题下未选中的搜索芯片用白色字体 -->
+    <color name="chip_text_unchecked">@color/white_80</color>
 
 </resources>

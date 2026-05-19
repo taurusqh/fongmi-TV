@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- fix: 选中芯片文字亮白(在蓝色背景上)，未选中用半透白(在暗色背景上) -->
+    <!-- fix: 选中亮白(蓝色背景)，未选深色(浅色背景) → 分别在 values/values-night 中定义 -->
     <item android:color="@color/white" android:state_checked="true"/>
-    <item android:color="@color/white_60"/>
+    <item android:color="@color/chip_text_unchecked"/>
 </selector>
