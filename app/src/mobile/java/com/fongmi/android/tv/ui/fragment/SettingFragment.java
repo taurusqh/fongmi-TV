@@ -265,16 +265,16 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         updateActiveWarehouseText();
     }
 
-    // fix: 点击当前仓库名弹出列表切换，无仓库时打开多仓管理界面
+    // fix: 点击当前仓库名弹出子仓库切换列表，无数据时提示去多仓管理解析
     private void onActiveWarehouseClick(View view) {
         long depotId = DepotService.get().getDefaultId();
         if (depotId == -1) {
-            onDepot(view);
+            Notify.show(R.string.depot_url_empty);
             return;
         }
         List<Depot> warehouses = DepotService.get().getCachedWarehouses(depotId);
         if (warehouses.isEmpty()) {
-            onDepot(view);
+            Notify.show(R.string.depot_empty);
             return;
         }
         String current = DepotService.get().getActiveWarehouseName();
