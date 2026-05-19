@@ -42,21 +42,25 @@
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_exact"
-            style="@style/Widget.Material3.Chip.Assist.Elevated"
+            style="@style/Widget.Material3.Chip.Filter.Elevated"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="精确"
             android:textColor="@color/chip_text"
-            app:chipBackgroundColor="@color/chip_bg" />
+            app:chipBackgroundColor="@color/chip_bg"
+            app:chipStrokeColor="@color/chip_stroke"
+            app:chipStrokeWidth="2dp" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_fuzzy"
-            style="@style/Widget.Material3.Chip.Assist.Elevated"
+            style="@style/Widget.Material3.Chip.Filter.Elevated"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="模糊"
             android:textColor="@color/chip_text"
-            app:chipBackgroundColor="@color/chip_bg" />
+            app:chipBackgroundColor="@color/chip_bg"
+            app:chipStrokeColor="@color/chip_stroke"
+            app:chipStrokeWidth="2dp" />
 
     </com.google.android.material.chip.ChipGroup>
 

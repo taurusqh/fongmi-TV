@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- fix: 选中芯片用主题色，未选中用半透明白色在暗色背景上更可见 -->
+    <!-- fix: 选中芯片蓝色描边，未选中透明 -->
     <item android:color="@color/blue_500" android:state_checked="true"/>
-    <item android:color="@color/white_10"/>
+    <item android:color="@android:color/transparent"/>
 </selector>
