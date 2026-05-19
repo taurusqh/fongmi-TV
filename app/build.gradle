@@ -7,7 +7,7 @@ rootProject.file('local.properties').withInputStream {
     localProps.load(it)
 }
 
-def appVersionName = "5.4.219"
+def appVersionName = "5.4.220"
 
 android {
     namespace = 'com.fongmi.android.tv'
